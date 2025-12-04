@@ -106,9 +106,17 @@ apt-get update >/dev/null 2>&1
 apt-get install -y curl wget git jq build-essential libssl-dev pkg-config python3 >/dev/null 2>&1
 msg_ok "Installed Dependencies"
 
-msg_info "Installing Node.js"
-if ! command -v node &>/dev/null; then
-curl -fsSL https://deb.nodesource.com/setup_20.x | bash - >/dev/null 2>&1
+msg_info "Installing Node.js v22 (Required for VS Code)"
+if command -v node &>/dev/null; then
+NODE_VERSION=$(node --version | cut -d'v' -f2 | cut -d'.' -f1)
+if [ "$NODE_VERSION" -lt 22 ]; then
+echo -e "\n${YW}Removing old Node.js v$NODE_VERSION...${CL}"
+apt-get remove -y nodejs >/dev/null 2>&1 || true
+fi
+fi
+
+if ! command -v node &>/dev/null || [ "$NODE_VERSION" -lt 22 ]; then
+curl -fsSL https://deb.nodesource.com/setup_22.x | bash - >/dev/null 2>&1
 apt-get install -y nodejs >/dev/null 2>&1
 fi
 msg_ok "Installed Node.js $(node --version)"
