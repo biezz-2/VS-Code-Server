@@ -39,9 +39,7 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/biezz-2/VS-Code-Server/r
 
 ```
 http://YOUR_IP:8680
-```
-
----
+``
 
 ### **Script 2: VSCode Server Build Original dari Microsoft**
 
