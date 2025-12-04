@@ -4,6 +4,7 @@
 # Uses official Microsoft VS Code marketplace for extensions
 # Based on: https://github.com/community-scripts/ProxmoxVE
 # Modified by: biezz-2
+# Fixed: Correct product.json location for Copilot support
 
 function header_info {
 cat <<"EOF"
@@ -45,6 +46,7 @@ local flag="${RD}‼ ERROR ${CL}$EXIT@$LINE"
 echo -e "$flag $msg" 1>&2
 exit "$EXIT"
 }
+
 clear
 header_info
 if command -v pveversion >/dev/null 2>&1; then
@@ -55,6 +57,7 @@ if [ -e /etc/alpine-release ]; then
 echo -e "⚠️  Can't Install on Alpine"
 exit
 fi
+
 while true; do
 read -p "This will Install ${APP} on $hostname. Proceed(y/n)?" yn
 case $yn in
@@ -124,6 +127,9 @@ msg_info "Installing Code-Server v${VERSION}"
 curl -fOL https://github.com/coder/code-server/releases/download/v"$VERSION"/code-server_"${VERSION}"_amd64.deb &>/dev/null
 dpkg -i code-server_"${VERSION}"_amd64.deb &>/dev/null
 rm -rf code-server_"${VERSION}"_amd64.deb
+msg_ok "Installed Code-Server v${VERSION}"
+
+msg_info "Configuring Code-Server"
 mkdir -p ~/.config/code-server/
 mkdir -p ~/.local/share/code-server/User/
 systemctl enable -q --now code-server@"$USER"
@@ -146,7 +152,18 @@ app-name: "Visual Studio Code"
 EOF
 fi
 
-cat <<EOF >~/.local/share/code-server/product.json
+msg_info "Configuring Microsoft Marketplace (Copilot Support)"
+
+PRODUCT_JSON_PATH=$(find /usr/lib -path "*/code-server*/lib/vscode/product.json" 2>/dev/null | head -1)
+
+if [ -z "$PRODUCT_JSON_PATH" ]; then
+echo -e "\n${RD}ERROR: Cannot find product.json location!${CL}"
+exit 1
+fi
+
+cp "$PRODUCT_JSON_PATH" "$PRODUCT_JSON_PATH.backup"
+
+cat <<EOF >"$PRODUCT_JSON_PATH"
 {
 "nameShort": "Code",
 "nameLong": "Visual Studio Code",
@@ -189,8 +206,20 @@ cat <<EOF >~/.local/share/code-server/User/settings.json
 }
 EOF
 
+msg_ok "Configured Microsoft Marketplace"
+
+msg_info "Restarting Code-Server"
 systemctl restart code-server@"$USER"
-msg_ok "Installed Code-Server v${VERSION} on $hostname"
+sleep 3
+msg_ok "Code-Server Restarted"
+
+if systemctl is-active --quiet code-server@"$USER"; then
+SERVICE_STATUS="${GN}Running${CL}"
+else
+SERVICE_STATUS="${RD}Failed${CL}"
+fi
+
+msg_ok "Installed ${APP} on $hostname"
 
 echo -e "\n${GN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${CL}"
 echo -e "${GN}Installation Complete!${CL}\n"
@@ -206,13 +235,20 @@ echo -e "${YW}Warning:${CL} Anyone can access without password!\n"
 fi
 
 echo -e "${GN}✓${CL} Microsoft Visual Studio Marketplace: ${GN}Enabled${CL}"
-echo -e "${GN}✓${CL} You can now install official Microsoft extensions"
+echo -e "${GN}✓${CL} GitHub Copilot: ${GN}Should work now!${CL}"
+echo -e "${GN}✓${CL} All official Microsoft extensions supported"
 echo -e "\n${YW}Configuration:${CL}"
-echo -e "  Config file: ${BGN}~/.config/code-server/config.yaml${CL}"
-echo -e "  Product file: ${BGN}~/.local/share/code-server/product.json${CL}"
+echo -e "  Config: ${BGN}~/.config/code-server/config.yaml${CL}"
+echo -e "  Product: ${BGN}$PRODUCT_JSON_PATH${CL}"
+echo -e "  Backup: ${BGN}$PRODUCT_JSON_PATH.backup${CL}"
 echo -e "  Settings: ${BGN}~/.local/share/code-server/User/settings.json${CL}"
 echo -e "\n${YW}Service Management:${CL}"
 echo -e "  Status:  ${BGN}systemctl status code-server@$USER${CL}"
 echo -e "  Restart: ${BGN}systemctl restart code-server@$USER${CL}"
 echo -e "  Logs:    ${BGN}journalctl -u code-server@$USER -f${CL}"
+echo -e "\n${YW}Install GitHub Copilot:${CL}"
+echo -e "  1. Open Extensions (Ctrl+Shift+X)"
+echo -e "  2. Search for 'GitHub Copilot'"
+echo -e "  3. Click Install"
+echo -e "  4. Sign in with GitHub"
 echo -e "${GN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${CL}\n"
