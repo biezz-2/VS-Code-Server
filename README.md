@@ -58,7 +58,7 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/biezz-2/VS-Code-Server/r
 
 ---
 
-## 🧭 Diagram Alur Instalasi (Mermaid)
+## 🧭 Diagram Alur Instalasi
 
 ```mermaid
 flowchart TD
