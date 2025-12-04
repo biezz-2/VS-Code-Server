@@ -57,6 +57,22 @@ http://YOUR_IP:8680
 
 ---
 
+## SCRIPT 1: Code-Server (Disarankan)
+ Apa yang diinstal? Menggunakan kode biner Code-Server (proyek Coder), yang telah dikonfigurasi untuk mengakses Microsoft Marketplace.
+
+ Prosedur: Instal -> Konfigurasi Otomatis -> Unduh.deb (~50MB).
+
+ Keunggulan: Instalasi instan, hemat sumber daya, dan sangat stabil.
+
+## SCRIPT 2: Sumber Asli VS Code  
+Apa yang diinstal?  Skrip ini akan mengunduh kode sumber asli VS Code dari GitHub Microsoft, lalu mengompilasi dan membangun versi web dari awal di server Anda.  
+
+Instal Node.js/Yarn, lalu unduh dependensi (~800MB), kloning repositori (~500MB), dan kompilasi kode sumber (proses intensif).
+
+ Kelebihan: Anda mendapatkan versi “murni” tanpa modifikasi pihak ketiga.
+
+ Kekurangan: Membutuhkan spesifikasi server tinggi hanya untuk proses instalasi.
+
 ## ⭐ **Fitur Utama**
 
 ✅ **Microsoft Visual Studio Marketplace Penuh**
