@@ -35,7 +35,7 @@ cd vscode-server-deploy
 ### **Script 1: Code Server dengan Microsoft Marketplace (RECOMMENDED)**
 
 ```sh
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/biezz-2/VS-Code-Server/refs/heads/main/official-vscode-server.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/biezz-2/VS-Code-Server/refs/heads/main/unofficial-vscode-server.sh)"
 
 ```
 **Akses setelah instalasi:**
@@ -46,7 +46,7 @@ http://YOUR_IP:8680
 ### **Script 2: VSCode Server Build Original dari Microsoft**
 
 ```sh
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/biezz-2/VS-Code-Server/refs/heads/main/unofficial-vscode-server.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/biezz-2/VS-Code-Server/refs/heads/main/official-vscode-server.sh)"
 
 ```
 
@@ -212,4 +212,3 @@ Jika ada pertanyaan, saran, atau ingin berkontribusi:
 ---
 
 **Created by:** [@biezz-2](https://github.com/biezz-2)  
-**Last Updated:** 2025-12-04
