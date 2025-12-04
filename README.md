@@ -38,6 +38,8 @@ cd vscode-server-deploy
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/biezz-2/VS-Code-Server/refs/heads/main/official-vscode-server.sh)"
 
 ```
+**Akses setelah instalasi:**
+``
 http://YOUR_IP:8680
 ``
 
