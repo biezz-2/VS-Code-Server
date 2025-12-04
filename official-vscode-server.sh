@@ -7,7 +7,7 @@ function header_info {
 cat <<"EOF"
  _    _____    ______          __        _____                          
 | |  / / (_)  / ____/___  ____/ /__     / ___/___  ______   _____  _____
-| | / / / /  / /   / __ \/ __  / _ \    \__ \/ _ \/ ___/ | / / / _ \/ ___/
+| | / / / /  / /   / __ \/ __  / _ \    \__ \/ _ \/ ___/ | / / _ \/ ___/
 | |/ / / /  / /___/ /_/ / /_/ /  __/   ___/ /  __/ /   | |/ /  __/ /    
 |___/_/_/   \____/\____/\__,_/\___/   /____/\___/_/    |___/\___/_/     
                                                                          
@@ -41,19 +41,46 @@ local reason="Unknown failure occured."
 local msg="${1:-$reason}"
 local flag="${RD}‼ ERROR ${CL}$EXIT@$LINE"
 echo -e "$flag $msg" 1>&2
+echo -e "${YW}Check logs above for details${CL}"
 exit "$EXIT"
 }
 
 clear
 header_info
+
 if command -v pveversion >/dev/null 2>&1; then
 echo -e "⚠️  Can't Install on Proxmox "
 exit
 fi
+
 if [ -e /etc/alpine-release ]; then
 echo -e "⚠️  Can't Install on Alpine"
 exit
 fi
+
+echo -e "${YW}System Requirements Check${CL}"
+echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+TOTAL_RAM=$(free -m | awk '/^Mem:/{print $2}')
+FREE_RAM=$(free -m | awk '/^Mem:/{print $7}')
+echo -e "Total RAM: ${BL}${TOTAL_RAM}MB${CL}"
+echo -e "Available RAM: ${BL}${FREE_RAM}MB${CL}"
+
+if [ "$TOTAL_RAM" -lt 3500 ]; then
+echo -e "${RD}ERROR: Need at least 4GB total RAM to build VS Code${CL}"
+echo -e "${YW}Recommendation: Use unofficial-vscode-server.sh instead (only needs 1GB)${CL}"
+exit 1
+fi
+
+if [ "$FREE_RAM" -lt 2000 ]; then
+echo -e "${YW}Warning: Low available RAM (${FREE_RAM}MB)${CL}"
+echo -e "${YW}This build may be slow or fail. Consider closing other applications.${CL}"
+read -p "Continue anyway? (y/n): " continue_choice
+case $continue_choice in
+[Yy]*) ;;
+*) exit 0 ;;
+esac
+fi
+echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
 
 while true; do
 read -p "This will Install ${APP} on $hostname. Proceed(y/n)?" yn
@@ -75,20 +102,20 @@ echo -e "${BFR} ${CM} ${GN}${msg}${CL}"
 }
 
 msg_info "Installing Dependencies"
-apt-get update &>/dev/null
-apt-get install -y curl wget git jq build-essential libssl-dev pkg-config &>/dev/null
+apt-get update >/dev/null 2>&1
+apt-get install -y curl wget git jq build-essential libssl-dev pkg-config python3 >/dev/null 2>&1
 msg_ok "Installed Dependencies"
 
 msg_info "Installing Node.js"
 if ! command -v node &>/dev/null; then
-curl -fsSL https://deb.nodesource.com/setup_20.x | bash - &>/dev/null
-apt-get install -y nodejs &>/dev/null
+curl -fsSL https://deb.nodesource.com/setup_20.x | bash - >/dev/null 2>&1
+apt-get install -y nodejs >/dev/null 2>&1
 fi
 msg_ok "Installed Node.js $(node --version)"
 
 msg_info "Installing Yarn"
 if ! command -v yarn &>/dev/null; then
-npm install -g yarn &>/dev/null
+npm install -g yarn >/dev/null 2>&1
 fi
 msg_ok "Installed Yarn $(yarn --version)"
 
@@ -101,16 +128,31 @@ INSTALL_DIR="/opt/vscode-server"
 if [ -d "$INSTALL_DIR" ]; then
 rm -rf "$INSTALL_DIR"
 fi
-git clone --depth 1 --branch "$VSCODE_VERSION" https://github.com/microsoft/vscode.git "$INSTALL_DIR" &>/dev/null
+git clone --depth 1 --branch "$VSCODE_VERSION" https://github.com/microsoft/vscode.git "$INSTALL_DIR" >/dev/null 2>&1
 cd "$INSTALL_DIR"
 msg_ok "Cloned VS Code Repository"
 
-msg_info "Installing VS Code Dependencies (This may take a while)"
-yarn install &>/dev/null
+echo -e "\n${YW}Building VS Code - This will take 30-60 minutes${CL}"
+echo -e "${YW}Please be patient and don't interrupt...${CL}\n"
+
+msg_info "Installing VS Code Dependencies"
+echo -e "\n${DGN}Running: yarn install (this may take 15-30 minutes)${CL}"
+if ! yarn install; then
+echo -e "\n${RD}ERROR: yarn install failed!${CL}"
+echo -e "${YW}This usually happens due to:${CL}"
+echo -e "  - Insufficient RAM (need 4GB+)"
+echo -e "  - Network issues"
+echo -e "  - Disk space issues"
+exit 1
+fi
 msg_ok "Installed VS Code Dependencies"
 
 msg_info "Building VS Code Server"
-yarn gulp vscode-reh-web-linux-x64 &>/dev/null
+echo -e "\n${DGN}Running: yarn gulp vscode-reh-web-linux-x64 (15-30 minutes)${CL}"
+if ! yarn gulp vscode-reh-web-linux-x64; then
+echo -e "\n${RD}ERROR: VS Code build failed!${CL}"
+exit 1
+fi
 msg_ok "Built VS Code Server"
 
 msg_info "Creating Systemd Service"
@@ -150,13 +192,14 @@ EOF
 
 PRODUCT_JSON="$INSTALL_DIR/product.json"
 if [ -f "$PRODUCT_JSON" ]; then
+cp "$PRODUCT_JSON" "$PRODUCT_JSON.backup"
 cat <<EOF >"$PRODUCT_JSON"
 {
 "nameShort": "Code",
-"nameLong": "Visual Studio Code - Open Source",
-"applicationName": "code-oss",
-"dataFolderName": ".vscode-oss",
-"win32MutexName": "vscodeoss",
+"nameLong": "Visual Studio Code",
+"applicationName": "code",
+"dataFolderName": ".vscode",
+"win32MutexName": "vscode",
 "licenseName": "MIT",
 "licenseUrl": "https://github.com/microsoft/vscode/blob/main/LICENSE.txt",
 "extensionsGallery": {
@@ -186,4 +229,5 @@ echo -e "- Start:   ${BGN}systemctl start vscode-server${CL}"
 echo -e "- Stop:    ${BGN}systemctl stop vscode-server${CL}"
 echo -e "- Restart: ${BGN}systemctl restart vscode-server${CL}"
 echo -e "- Status:  ${BGN}systemctl status vscode-server${CL}"
+echo -e "- Logs:    ${BGN}journalctl -u vscode-server -f${CL}"
 echo -e "${GN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${CL}\n"
