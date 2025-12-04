@@ -20,8 +20,6 @@
                         vscode: {
                             dark: '#1e1e1e',
                             blue: '#007acc',
-                            sidebar: '#252526',
-                            activity: '#333333'
                         }
                     }
                 }
@@ -39,7 +37,6 @@
             transition: opacity 0.2s;
         }
         .code-block:hover .copy-btn { opacity: 1; }
-        .tab-active { border-bottom: 2px solid #007acc; color: #60a5fa; }
     </style>
 </head>
 <body class="antialiased">
@@ -49,13 +46,13 @@
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center gap-3">
                     <i class="fa-solid fa-code text-blue-500 text-2xl"></i>
-                    <span class="font-bold text-xl tracking-tight">VSCode Server Deploy</span>
+                    <span class="font-bold text-xl tracking-tight">VSCode Server</span>
                 </div>
                 <div class="hidden md:block">
                     <div class="ml-10 flex items-baseline space-x-4">
-                        <a href="#home" class="hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium">Home</a>
-                        <a href="#comparison" class="hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium">Perbandingan</a>
-                        <a href="#install" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition">Install Sekarang</a>
+                        <a href="#home" class="hover:text-blue-400 px-3 py-2 text-sm font-medium">Home</a>
+                        <a href="#comparison" class="hover:text-blue-400 px-3 py-2 text-sm font-medium">Perbandingan</a>
+                        <a href="#install" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition">Install</a>
                     </div>
                 </div>
             </div>
@@ -65,31 +62,29 @@
     <section id="home" class="pt-20 pb-16 px-4 text-center">
         <div class="max-w-4xl mx-auto">
             <div class="inline-block mb-4 px-3 py-1 bg-blue-900/30 text-blue-400 rounded-full text-sm font-semibold border border-blue-800">
-                Created by @biezz-2
+                Updated: One-Click Install
             </div>
             <h1 class="text-4xl md:text-6xl font-bold mb-6 text-white leading-tight">
-                Deploy <span class="text-blue-500">VS Code Server</span><br> dengan Full Marketplace
+                Deploy <span class="text-blue-500">VS Code Server</span><br> One-Click Command
             </h1>
             <p class="text-lg text-slate-400 mb-8 max-w-2xl mx-auto">
-                Solusi All-in-One untuk menjalankan VS Code di browser. Mendukung ekstensi resmi Microsoft (Pylance, Copilot, C#) dengan instalasi otomatis.
+                Script otomatis untuk menjalankan VS Code di browser. Mendukung ekstensi resmi Microsoft (Pylance, Copilot, C#).
             </p>
             
-            <div class="flex flex-col sm:flex-row justify-center gap-4">
-                <a href="#install" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold text-lg transition flex items-center justify-center gap-2 shadow-lg shadow-blue-900/20">
-                    <i class="fa-solid fa-download"></i> Mulai Instalasi
-                </a>
-                <a href="https://github.com/biezz-2/vscode-server-deploy" target="_blank" class="bg-slate-800 hover:bg-slate-700 text-white px-8 py-3 rounded-lg font-semibold text-lg transition flex items-center justify-center gap-2 border border-slate-600">
-                    <i class="fa-brands fa-github"></i> View on GitHub
+            <div class="flex justify-center gap-4">
+                <a href="#install" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold text-lg transition shadow-lg shadow-blue-900/20">
+                    <i class="fa-solid fa-download mr-2"></i> Install Sekarang
                 </a>
             </div>
         </div>
     </section>
 
     <div class="max-w-4xl mx-auto px-4 mb-20">
-        <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 shadow-xl">
-            <h3 class="text-sm uppercase tracking-wider text-slate-400 font-semibold mb-3">🚀 Quick Start (One Line Command)</h3>
+        <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 shadow-xl relative overflow-hidden">
+            <div class="absolute top-0 right-0 bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">RECOMMENDED</div>
+            <h3 class="text-sm uppercase tracking-wider text-slate-400 font-semibold mb-3">🚀 Script 1: Code-Server (Unofficial/Fast)</h3>
             <div class="code-block bg-black rounded-lg p-4 font-mono text-sm text-green-400 overflow-x-auto">
-                <code>git clone https://github.com/biezz-2/vscode-server-deploy.git && cd vscode-server-deploy && chmod +x install-code-server-microsoft-marketplace.sh && ./install-code-server-microsoft-marketplace.sh</code>
+                <code id="cmd1">bash -c "$(curl -fsSL https://raw.githubusercontent.com/biezz-2/VS-Code-Server/refs/heads/main/unofficial-vscode-server.sh)"</code>
                 <button onclick="copyCode(this)" class="copy-btn bg-slate-700 hover:bg-slate-600 text-white text-xs px-2 py-1 rounded">Copy</button>
             </div>
         </div>
@@ -97,40 +92,30 @@
 
     <section id="comparison" class="py-16 bg-slate-900/50">
         <div class="max-w-6xl mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-12"><i class="fa-solid fa-scale-balanced text-blue-500 mr-2"></i> Analisis Pool: Pilih Script Anda</h2>
-            
+            <h2 class="text-3xl font-bold text-center mb-12">Pilih Script Anda</h2>
             <div class="grid md:grid-cols-2 gap-8">
-                <div class="relative bg-slate-800/50 rounded-2xl p-8 border border-green-500/30 hover:border-green-500 transition shadow-lg">
-                    <div class="absolute top-0 right-0 bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg">RECOMMENDED</div>
+                <div class="bg-slate-800/50 rounded-2xl p-8 border border-green-500/30 hover:border-green-500 transition shadow-lg">
                     <div class="flex items-center gap-3 mb-6">
-                        <div class="w-12 h-12 bg-green-900/30 rounded-full flex items-center justify-center text-green-400 text-2xl">
-                            <i class="fa-solid fa-bolt"></i>
-                        </div>
+                        <i class="fa-solid fa-bolt text-green-400 text-3xl"></i>
                         <h3 class="text-2xl font-bold text-white">Script 1: Code-Server</h3>
                     </div>
                     <ul class="space-y-3 mb-8 text-slate-300">
-                        <li class="flex items-center gap-2"><i class="fa-solid fa-clock text-green-400 w-5"></i> <span>Install: <strong>5-10 Menit</strong></span></li>
-                        <li class="flex items-center gap-2"><i class="fa-solid fa-memory text-green-400 w-5"></i> <span>RAM Min: <strong>1 GB</strong></span></li>
-                        <li class="flex items-center gap-2"><i class="fa-brands fa-microsoft text-blue-400 w-5"></i> <span>Marketplace: <strong>Full Support</strong></span></li>
-                        <li class="flex items-center gap-2"><i class="fa-solid fa-server text-green-400 w-5"></i> <span>Production Ready</span></li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-clock text-green-400 w-5"></i> Install: <strong>5-10 Menit</strong></li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-memory text-green-400 w-5"></i> RAM Min: <strong>1 GB</strong></li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-server text-green-400 w-5"></i> <strong>Production Ready</strong></li>
                     </ul>
-                    <p class="text-sm text-slate-400 mb-6">Paling cocok untuk pengguna umum, VPS standar, dan deployment cepat tanpa ribet.</p>
                 </div>
 
-                <div class="relative bg-slate-800/50 rounded-2xl p-8 border border-orange-500/30 hover:border-orange-500 transition shadow-lg">
+                <div class="bg-slate-800/50 rounded-2xl p-8 border border-orange-500/30 hover:border-orange-500 transition shadow-lg">
                     <div class="flex items-center gap-3 mb-6">
-                        <div class="w-12 h-12 bg-orange-900/30 rounded-full flex items-center justify-center text-orange-400 text-2xl">
-                            <i class="fa-solid fa-screwdriver-wrench"></i>
-                        </div>
+                        <i class="fa-brands fa-microsoft text-orange-400 text-3xl"></i>
                         <h3 class="text-2xl font-bold text-white">Script 2: Original Build</h3>
                     </div>
                     <ul class="space-y-3 mb-8 text-slate-300">
-                        <li class="flex items-center gap-2"><i class="fa-solid fa-clock text-orange-400 w-5"></i> <span>Install: <strong>30-60 Menit</strong></span></li>
-                        <li class="flex items-center gap-2"><i class="fa-solid fa-memory text-orange-400 w-5"></i> <span>RAM Min: <strong>4 GB+</strong></span></li>
-                        <li class="flex items-center gap-2"><i class="fa-brands fa-microsoft text-blue-400 w-5"></i> <span>Source: <strong>100% Microsoft</strong></span></li>
-                        <li class="flex items-center gap-2"><i class="fa-solid fa-code-branch text-orange-400 w-5"></i> <span>Custom Build</span></li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-clock text-orange-400 w-5"></i> Install: <strong>30-60 Menit</strong></li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-memory text-orange-400 w-5"></i> RAM Min: <strong>4 GB+ (Wajib)</strong></li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-code text-orange-400 w-5"></i> <strong>Build from Source</strong></li>
                     </ul>
-                    <p class="text-sm text-slate-400 mb-6">Untuk developer yang butuh build murni dari source code asli VS Code. Membutuhkan resource tinggi.</p>
                 </div>
             </div>
         </div>
@@ -138,11 +123,11 @@
 
     <section id="install" class="py-16">
         <div class="max-w-5xl mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-8">Panduan Instalasi</h2>
+            <h2 class="text-3xl font-bold text-center mb-8">Instalasi</h2>
 
             <div class="flex justify-center mb-8 border-b border-slate-700">
                 <button onclick="switchTab('script1')" id="tab-script1" class="px-6 py-3 text-lg font-medium text-blue-400 border-b-2 border-blue-500 focus:outline-none transition">
-                    Script 1 (Code-Server)
+                    Script 1 (Recommended)
                 </button>
                 <button onclick="switchTab('script2')" id="tab-script2" class="px-6 py-3 text-lg font-medium text-slate-400 hover:text-slate-200 focus:outline-none transition">
                     Script 2 (Original)
@@ -150,58 +135,30 @@
             </div>
 
             <div id="content-script1" class="bg-slate-800 rounded-xl p-8 border border-slate-700">
-                <h3 class="text-xl font-bold text-green-400 mb-4">Instalasi Code-Server (Recommended)</h3>
-                <p class="mb-4 text-slate-300">Metode ini mendownload binary yang sudah dicompile, menghemat waktu dan resource CPU.</p>
+                <h3 class="text-xl font-bold text-green-400 mb-4">Instalasi Cepat (Code-Server)</h3>
+                <p class="mb-4 text-slate-300">Salin dan jalankan perintah ini di terminal server Anda:</p>
                 
-                <div class="space-y-4">
-                    <div>
-                        <p class="text-sm text-slate-400 mb-1">1. Clone Repository & Masuk Direktori</p>
-                        <div class="code-block bg-black rounded p-3 font-mono text-sm">
-                            <code>git clone https://github.com/biezz-2/vscode-server-deploy.git
-cd vscode-server-deploy</code>
-                            <button onclick="copyCode(this)" class="copy-btn bg-slate-700 text-white text-xs px-2 py-1 rounded">Copy</button>
-                        </div>
-                    </div>
-                    <div>
-                        <p class="text-sm text-slate-400 mb-1">2. Jalankan Installer</p>
-                        <div class="code-block bg-black rounded p-3 font-mono text-sm">
-                            <code>chmod +x install-code-server-microsoft-marketplace.sh
-./install-code-server-microsoft-marketplace.sh</code>
-                            <button onclick="copyCode(this)" class="copy-btn bg-slate-700 text-white text-xs px-2 py-1 rounded">Copy</button>
-                        </div>
-                    </div>
+                <div class="code-block bg-black rounded p-4 font-mono text-sm text-green-400 mb-4 overflow-x-auto">
+                    <code>bash -c "$(curl -fsSL https://raw.githubusercontent.com/biezz-2/VS-Code-Server/refs/heads/main/unofficial-vscode-server.sh)"</code>
+                    <button onclick="copyCode(this)" class="copy-btn bg-slate-700 text-white text-xs px-2 py-1 rounded">Copy</button>
                 </div>
                 
-                <div class="mt-6 p-4 bg-blue-900/20 border border-blue-800 rounded-lg">
-                    <p class="text-blue-200"><i class="fa-solid fa-info-circle mr-2"></i> Akses server di: <strong>http://IP_ADDRESS:8680</strong></p>
+                <div class="p-4 bg-blue-900/20 border border-blue-800 rounded-lg">
+                    <p class="text-blue-200"><i class="fa-solid fa-globe mr-2"></i> Akses browser: <strong>http://YOUR_IP:8680</strong></p>
                 </div>
             </div>
 
             <div id="content-script2" class="hidden bg-slate-800 rounded-xl p-8 border border-slate-700">
-                <h3 class="text-xl font-bold text-orange-400 mb-4">Instalasi VS Code Server Original</h3>
-                <p class="mb-4 text-slate-300">Metode ini melakukan build source code dari nol. Pastikan server memiliki RAM min 4GB.</p>
+                <h3 class="text-xl font-bold text-orange-400 mb-4">Instalasi Original (Build Source)</h3>
+                <p class="mb-4 text-slate-300">Proses ini memakan waktu lama. Pastikan RAM > 4GB.</p>
                 
-                <div class="space-y-4">
-                    <div>
-                        <p class="text-sm text-slate-400 mb-1">1. Clone Repository & Masuk Direktori</p>
-                        <div class="code-block bg-black rounded p-3 font-mono text-sm">
-                            <code>git clone https://github.com/biezz-2/vscode-server-deploy.git
-cd vscode-server-deploy</code>
-                            <button onclick="copyCode(this)" class="copy-btn bg-slate-700 text-white text-xs px-2 py-1 rounded">Copy</button>
-                        </div>
-                    </div>
-                    <div>
-                        <p class="text-sm text-slate-400 mb-1">2. Jalankan Installer (Proses Lama)</p>
-                        <div class="code-block bg-black rounded p-3 font-mono text-sm">
-                            <code>chmod +x install-vscode-server-original.sh
-./install-vscode-server-original.sh</code>
-                            <button onclick="copyCode(this)" class="copy-btn bg-slate-700 text-white text-xs px-2 py-1 rounded">Copy</button>
-                        </div>
-                    </div>
+                <div class="code-block bg-black rounded p-4 font-mono text-sm text-orange-400 mb-4 overflow-x-auto">
+                    <code>bash -c "$(curl -fsSL https://raw.githubusercontent.com/biezz-2/VS-Code-Server/refs/heads/main/official-vscode-server.sh)"</code>
+                    <button onclick="copyCode(this)" class="copy-btn bg-slate-700 text-white text-xs px-2 py-1 rounded">Copy</button>
                 </div>
                 
-                <div class="mt-6 p-4 bg-orange-900/20 border border-orange-800 rounded-lg">
-                    <p class="text-orange-200"><i class="fa-solid fa-triangle-exclamation mr-2"></i> Proses ini memakan waktu 30-60 menit tergantung CPU.</p>
+                <div class="p-4 bg-orange-900/20 border border-orange-800 rounded-lg">
+                    <p class="text-orange-200"><i class="fa-solid fa-globe mr-2"></i> Akses browser: <strong>http://YOUR_IP:8680</strong></p>
                 </div>
             </div>
         </div>
@@ -235,7 +192,7 @@ cd vscode-server-deploy</code>
 
                 <div>
                     <h2 class="text-2xl font-bold mb-6"><i class="fa-solid fa-shield-halved text-blue-500 mr-2"></i> Keamanan (Wajib)</h2>
-                    <p class="text-slate-400 mb-4">Jangan biarkan server terbuka tanpa password.</p>
+                    <p class="text-slate-400 mb-4">Jangan biarkan server terbuka tanpa password. **Direkomendasikan.**</p>
 
                     <div class="space-y-4">
                         <div class="bg-slate-800 p-4 rounded-lg border border-slate-700">
@@ -243,12 +200,12 @@ cd vscode-server-deploy</code>
                             <div class="code-block bg-black rounded p-2 font-mono text-xs mb-2">
                                 <code>nano ~/.config/code-server/config.yaml</code>
                             </div>
-                            <p class="text-sm text-slate-400">Ubah <code>auth: none</code> menjadi <code>auth: password</code> dan isi password Anda.</p>
+                            <p class="text-sm text-slate-400">Ubah `auth: none` menjadi `auth: password` dan isi password Anda. Lalu restart service.</p>
                         </div>
 
                         <div class="bg-slate-800 p-4 rounded-lg border border-slate-700">
                             <h4 class="font-bold text-white mb-2">2. HTTPS / SSL</h4>
-                            <p class="text-sm text-slate-400 mb-2">Dibutuhkan agar fitur copy-paste browser berfungsi.</p>
+                            <p class="text-sm text-slate-400 mb-2">Dibutuhkan agar fitur copy-paste browser berfungsi dan untuk keamanan data.</p>
                             <div class="code-block bg-black rounded p-2 font-mono text-xs">
                                 <code>openssl req -x509 -nodes -days 365 ...</code>
                             </div>
@@ -290,7 +247,7 @@ cd vscode-server-deploy</code>
                         <i class="fa-solid fa-chevron-down text-slate-500 transition-transform" id="icon-faq3"></i>
                     </button>
                     <div id="faq3" class="hidden px-6 py-4 bg-slate-800/50 border-t border-slate-700 text-slate-300 text-sm">
-                        <strong>Ya!</strong> Script 1 sudah dimodifikasi agar terhubung ke Marketplace Microsoft, bukan OpenVSX. Anda bisa install Pylance, C# Dev Kit, dan Copilot.
+                        <strong>Ya!</strong> Script ini sudah dikonfigurasi agar terhubung ke Marketplace Microsoft. Anda bisa install Pylance, C# Dev Kit, dan Copilot.
                     </div>
                 </div>
             </div>
@@ -309,6 +266,11 @@ cd vscode-server-deploy</code>
     </footer>
 
     <script>
+        // Set Script 1 as active by default
+        document.addEventListener('DOMContentLoaded', () => {
+            switchTab('script1');
+        });
+
         // Tab Functionality
         function switchTab(tabName) {
             // Hide all content
@@ -319,7 +281,7 @@ cd vscode-server-deploy</code>
             document.getElementById('tab-script1').classList.remove('border-blue-500', 'text-blue-400');
             document.getElementById('tab-script1').classList.add('text-slate-400');
             
-            document.getElementById('tab-script2').classList.remove('border-blue-500', 'text-blue-400', 'text-orange-400'); // removed orange explicitly
+            document.getElementById('tab-script2').classList.remove('border-blue-500', 'text-blue-400');
             document.getElementById('tab-script2').classList.add('text-slate-400');
 
             // Show selected content & Style Tab
@@ -329,7 +291,7 @@ cd vscode-server-deploy</code>
                 document.getElementById('tab-script1').classList.remove('text-slate-400');
             } else {
                 document.getElementById('content-script2').classList.remove('hidden');
-                document.getElementById('tab-script2').classList.add('border-blue-500', 'text-blue-400'); // Keep uniform active color or use orange
+                document.getElementById('tab-script2').classList.add('border-blue-500', 'text-blue-400'); 
                 document.getElementById('tab-script2').classList.remove('text-slate-400');
             }
         }
