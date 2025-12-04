@@ -94,18 +94,16 @@
      mkdir -p ~/.config/code-server/
      mkdir -p ~/.local/share/code-server/User/
      
-     # Configure code-server to use Microsoft marketplace
-     cat <<EOF >~/.config/code-server/config.yaml
+     cat <<'CONFIGEOF' >~/.config/code-server/config.yaml
      bind-addr: 0.0.0.0:8680
      auth: none
      password: 
      cert: false
      app-name: "Visual Studio Code"
-     EOF
+     CONFIGEOF
      
-     # Create product.json to enable Microsoft marketplace
      PRODUCT_JSON=~/.local/share/code-server/product.json
-     cat <<EOF >"$PRODUCT_JSON"
+     cat <<'PRODUCTEOF' >"$PRODUCT_JSON"
      {
        "nameShort": "Code",
        "nameLong": "Visual Studio Code",
@@ -135,10 +133,9 @@
          "recommendationsUrl": ""
        }
      }
-     EOF
+     PRODUCTEOF
      
-     # User settings to disable telemetry and auto-update
-     cat <<EOF >~/.local/share/code-server/User/settings.json
+     cat <<'SETTINGSEOF' >~/.local/share/code-server/User/settings.json
      {
        "telemetry.telemetryLevel": "off",
        "update.mode": "none",
@@ -147,7 +144,7 @@
        "workbench.colorTheme": "Default Dark+",
        "security.workspace.trust.enabled": false
      }
-     EOF
+     SETTINGSEOF
      
      msg_ok "Configured Microsoft Marketplace"
      
@@ -156,10 +153,8 @@
      systemctl restart code-server@"$USER"
      msg_ok "Started Code-Server Service"
      
-     # Wait for service to start
      sleep 3
      
-     # Verify service is running
      if systemctl is-active --quiet code-server@"$USER"; then
        SERVICE_STATUS="${GN}Running${CL}"
      else
