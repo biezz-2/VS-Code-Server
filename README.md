@@ -218,5 +218,7 @@ Jika ada pertanyaan, saran, atau ingin berkontribusi:
 2. Atau kirim Pull Request dengan improvement Anda
 
 ---
+*Dapat diinstal di Proxmox LXC
+---
 
 **Created by:** [@biezz-2](https://github.com/biezz-2)  
