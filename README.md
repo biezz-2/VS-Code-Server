@@ -1,6 +1,6 @@
 # 🚀 VSCode Server Deploy — Stabil, Cepat, Marketplace‑Ready
 
-[![Repo Size](https://img.shields.io/github/repo-size/biezz-2/vscode-server-deploy?style=for-the-badge)](https://github.com/biezz-2/vscode-server-deploy)
+[![Repo Size](https://img.shields.io/github/repo-size/biezz-2/VS-Code-Server?style=for-the-badge)](https://github.com/biezz-2/VS-Code-Server)
 [![License: MIT](https://img.shields.io/badge/license-MIT-brightgreen?style=for-the-badge)](LICENSE)
 [![Rekomendasi](https://img.shields.io/badge/rekomendasi-Script%201-blue?style=for-the-badge&labelColor=2b90d9)](#rekomendasi-akhir)
 
