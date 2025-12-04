@@ -199,6 +199,6 @@ Sebelum membuka issue, sertakan informasi lingkungan (distro, versi kernel, outp
 
 ## 🧾 Lisensi
 
-Proyek ini dilisensikan di bawah MIT License — bebas digunakan dan dimodifikasi. Lihat file LICENSE untuk detail.
+Proyek ini dilisensikan di bawah MIT License.
 
 ---
