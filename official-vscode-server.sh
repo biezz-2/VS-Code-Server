@@ -187,4 +187,3 @@ echo -e "- Stop:    ${BGN}systemctl stop vscode-server${CL}"
 echo -e "- Restart: ${BGN}systemctl restart vscode-server${CL}"
 echo -e "- Status:  ${BGN}systemctl status vscode-server${CL}"
 echo -e "${GN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${CL}\n"
-root@proxmox:~# 
