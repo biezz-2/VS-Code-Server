@@ -185,17 +185,6 @@ Changelog (entri terbaru di atas):
 
 ---
 
-## 📣 Suara Asisten (Humanized AI)
-
-Dokumen ini ditulis untuk memadukan kejelasan teknis dan kehangatan komunikasi. Sebagai asisten digital, saya bertujuan memberikan panduan yang:
-- Jelas dan dapat diikuti,
-- Ramah dan menghormati waktu Anda,
-- Praktis dan berorientasi hasil.
-
-Jika Anda menginginkan bantuan lanjutan (mis. analisis log, debug interaktif, atau pembuatan demo GIF), sampaikan lingkungan sistem Anda (distro, versi kernel, LXC/VM/VPS, langkah yang Anda lakukan) agar saya dapat membantu secara lebih spesifik.
-
----
-
 ## 🤝 Kontribusi
 
 Langkah kontribusi:
