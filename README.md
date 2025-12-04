@@ -190,14 +190,6 @@ Edit config file dan ubah `auth: none` untuk disable password sementara
 
 ---
 
-## 🚀 **Quick Start dengan Satu Baris (Script 1)**
-
-```sh
-git clone https://github.com/biezz-2/vscode-server-deploy.git && cd vscode-server-deploy && chmod +x install-code-server-microsoft-marketplace.sh && ./install-code-server-microsoft-marketplace.sh
-```
-
----
-
 ## 📚 **Dokumentasi Lengkap**
 
 Untuk dokumentasi detail tentang instalasi, konfigurasi, security recommendations, dan advanced settings, baca:
