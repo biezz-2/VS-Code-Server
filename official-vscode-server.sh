@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Modified script to install VS Code Server with original Visual Studio Code repository
-# This allows using official Microsoft extensions and features
+# Updated: Use NPM instead of Yarn (VS Code 1.106+ requirement)
 
 function header_info {
 cat <<"EOF"
@@ -48,16 +48,6 @@ exit "$EXIT"
 clear
 header_info
 
-if command -v pveversion >/dev/null 2>&1; then
-echo -e "⚠️  Can't Install on Proxmox "
-exit
-fi
-
-if [ -e /etc/alpine-release ]; then
-echo -e "⚠️  Can't Install on Alpine"
-exit
-fi
-
 echo -e "${YW}System Requirements Check${CL}"
 echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 TOTAL_RAM=$(free -m | awk '/^Mem:/{print $2}')
@@ -66,19 +56,8 @@ echo -e "Total RAM: ${BL}${TOTAL_RAM}MB${CL}"
 echo -e "Available RAM: ${BL}${FREE_RAM}MB${CL}"
 
 if [ "$TOTAL_RAM" -lt 3500 ]; then
-echo -e "${RD}ERROR: Need at least 4GB total RAM to build VS Code${CL}"
-echo -e "${YW}Recommendation: Use unofficial-vscode-server.sh instead (only needs 1GB)${CL}"
+echo -e "${RD}ERROR: Need at least 4GB total RAM${CL}"
 exit 1
-fi
-
-if [ "$FREE_RAM" -lt 2000 ]; then
-echo -e "${YW}Warning: Low available RAM (${FREE_RAM}MB)${CL}"
-echo -e "${YW}This build may be slow or fail. Consider closing other applications.${CL}"
-read -p "Continue anyway? (y/n): " continue_choice
-case $continue_choice in
-[Yy]*) ;;
-*) exit 0 ;;
-esac
 fi
 echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
 
@@ -103,29 +82,22 @@ echo -e "${BFR} ${CM} ${GN}${msg}${CL}"
 
 msg_info "Installing Dependencies"
 apt-get update >/dev/null 2>&1
-apt-get install -y curl wget git jq build-essential libssl-dev pkg-config python3 >/dev/null 2>&1
+apt-get install -y curl wget git jq build-essential libssl-dev pkg-config python3 libx11-dev libxkbfile-dev libsecret-1-dev >/dev/null 2>&1
 msg_ok "Installed Dependencies"
 
-msg_info "Installing Node.js v22 (Required for VS Code)"
+msg_info "Installing Node.js v22"
 if command -v node &>/dev/null; then
 NODE_VERSION=$(node --version | cut -d'v' -f2 | cut -d'.' -f1)
 if [ "$NODE_VERSION" -lt 22 ]; then
-echo -e "\n${YW}Removing old Node.js v$NODE_VERSION...${CL}"
 apt-get remove -y nodejs >/dev/null 2>&1 || true
+curl -fsSL https://deb.nodesource.com/setup_22.x | bash - >/dev/null 2>&1
+apt-get install -y nodejs >/dev/null 2>&1
 fi
-fi
-
-if ! command -v node &>/dev/null || [ "$NODE_VERSION" -lt 22 ]; then
+else
 curl -fsSL https://deb.nodesource.com/setup_22.x | bash - >/dev/null 2>&1
 apt-get install -y nodejs >/dev/null 2>&1
 fi
 msg_ok "Installed Node.js $(node --version)"
-
-msg_info "Installing Yarn"
-if ! command -v yarn &>/dev/null; then
-npm install -g yarn >/dev/null 2>&1
-fi
-msg_ok "Installed Yarn $(yarn --version)"
 
 msg_info "Fetching Latest VS Code Version"
 VSCODE_VERSION=$(curl -fsSL https://api.github.com/repos/microsoft/vscode/releases/latest | jq -r '.tag_name')
@@ -133,35 +105,22 @@ msg_ok "Latest Version: ${VSCODE_VERSION}"
 
 msg_info "Cloning VS Code Repository"
 INSTALL_DIR="/opt/vscode-server"
-if [ -d "$INSTALL_DIR" ]; then
-rm -rf "$INSTALL_DIR"
-fi
+rm -rf "$INSTALL_DIR" 2>/dev/null || true
 git clone --depth 1 --branch "$VSCODE_VERSION" https://github.com/microsoft/vscode.git "$INSTALL_DIR" >/dev/null 2>&1
 cd "$INSTALL_DIR"
 msg_ok "Cloned VS Code Repository"
 
-echo -e "\n${YW}Building VS Code - This will take 30-60 minutes${CL}"
-echo -e "${YW}Please be patient and don't interrupt...${CL}\n"
+echo -e "\n${YW}Building VS Code - This takes 30-60 minutes${CL}\n"
 
-msg_info "Installing VS Code Dependencies"
-echo -e "\n${DGN}Running: yarn install (this may take 15-30 minutes)${CL}"
-if ! yarn install; then
-echo -e "\n${RD}ERROR: yarn install failed!${CL}"
-echo -e "${YW}This usually happens due to:${CL}"
-echo -e "  - Insufficient RAM (need 4GB+)"
-echo -e "  - Network issues"
-echo -e "  - Disk space issues"
-exit 1
-fi
-msg_ok "Installed VS Code Dependencies"
+msg_info "Installing Dependencies"
+echo -e "\n${DGN}Running: npm install (15-30 min)${CL}"
+npm install || exit 1
+msg_ok "Installed Dependencies"
 
-msg_info "Building VS Code Server"
-echo -e "\n${DGN}Running: yarn gulp vscode-reh-web-linux-x64 (15-30 minutes)${CL}"
-if ! yarn gulp vscode-reh-web-linux-x64; then
-echo -e "\n${RD}ERROR: VS Code build failed!${CL}"
-exit 1
-fi
-msg_ok "Built VS Code Server"
+msg_info "Compiling VS Code"
+echo -e "\n${DGN}Running: npm run compile (15-30 min)${CL}"
+npm run compile || exit 1
+msg_ok "Compiled VS Code"
 
 msg_info "Creating Systemd Service"
 cat <<EOF >/etc/systemd/system/vscode-server.service
@@ -185,22 +144,10 @@ EOF
 systemctl daemon-reload
 systemctl enable vscode-server
 systemctl start vscode-server
-msg_ok "Created and Started Systemd Service"
-
-msg_info "Configuring Microsoft Extensions Marketplace"
-mkdir -p ~/.config/Code/User
-cat <<EOF >~/.config/Code/User/settings.json
-{
-"extensions.autoUpdate": true,
-"extensions.autoCheckUpdates": true,
-"update.mode": "none",
-"telemetry.telemetryLevel": "off"
-}
-EOF
+msg_ok "Started Service"
 
 PRODUCT_JSON="$INSTALL_DIR/product.json"
-if [ -f "$PRODUCT_JSON" ]; then
-cp "$PRODUCT_JSON" "$PRODUCT_JSON.backup"
+cp "$PRODUCT_JSON" "$PRODUCT_JSON.backup" 2>/dev/null || true
 cat <<EOF >"$PRODUCT_JSON"
 {
 "nameShort": "Code",
@@ -218,24 +165,11 @@ cat <<EOF >"$PRODUCT_JSON"
 }
 }
 EOF
-fi
-msg_ok "Configured Microsoft Extensions Marketplace"
 
-msg_ok "Installed ${APP} on $hostname"
+msg_ok "Installed ${APP}"
 
 echo -e "\n${GN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${CL}"
 echo -e "${GN}Installation Complete!${CL}\n"
-echo -e "${APP} should be reachable at:"
 echo -e "${BL}http://$IP:8680${CL}\n"
-echo -e "${YW}Notes:${CL}"
-echo -e "- This uses the official Microsoft VS Code repository"
-echo -e "- You can install extensions from Microsoft Marketplace"
-echo -e "- Service name: vscode-server"
-echo -e "- Installation directory: $INSTALL_DIR"
-echo -e "\n${YW}Manage Service:${CL}"
-echo -e "- Start:   ${BGN}systemctl start vscode-server${CL}"
-echo -e "- Stop:    ${BGN}systemctl stop vscode-server${CL}"
-echo -e "- Restart: ${BGN}systemctl restart vscode-server${CL}"
-echo -e "- Status:  ${BGN}systemctl status vscode-server${CL}"
-echo -e "- Logs:    ${BGN}journalctl -u vscode-server -f${CL}"
+echo -e "Service: ${BGN}systemctl status vscode-server${CL}"
 echo -e "${GN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${CL}\n"
