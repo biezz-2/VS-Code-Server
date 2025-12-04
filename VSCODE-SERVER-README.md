@@ -359,4 +359,3 @@ Issues dan suggestions: https://github.com/biezz-2/vscode-server-deploy/issues
 
 ---
 
-**Last Updated:** 2025-12-04
