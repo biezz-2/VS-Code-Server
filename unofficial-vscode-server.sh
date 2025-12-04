@@ -2,7 +2,8 @@
      
      # Modified Code-Server installation script
      # Uses official Microsoft VS Code marketplace for extensions
-     # Easier installation compared to building from source
+     # Based on: https://github.com/community-scripts/ProxmoxVE
+     # Modified by: biezz-2
      
      function header_info {
        cat <<"EOF"
@@ -12,9 +13,9 @@
      / /___/ /_/ / /_/ /  __/   ___/ /  __/ /   | |/ /  __/ /    
      \____/\____/\__,_/\___/   /____/\___/_/    |___/\___/_/     
                          (Microsoft Marketplace Enabled)
+      
      EOF
      }
-     
      IP=$(hostname -I | awk '{print $1}')
      YW=$(echo "\033[33m")
      BL=$(echo "\033[36m")
@@ -44,7 +45,6 @@
        echo -e "$flag $msg" 1>&2
        exit "$EXIT"
      }
-     
      clear
      header_info
      if command -v pveversion >/dev/null 2>&1; then
@@ -55,7 +55,6 @@
        echo -e "⚠️  Can't Install on Alpine"
        exit
      fi
-     
      while true; do
        read -p "This will Install ${APP} on $hostname. Proceed(y/n)?" yn
        case $yn in
@@ -64,6 +63,43 @@
        *) echo "Please answer yes or no." ;;
        esac
      done
+     
+     echo -e "\n${YW}Authentication Setup${CL}"
+     echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+     while true; do
+       read -p "Do you want to enable password authentication? (y/n): " auth_choice
+       case $auth_choice in
+       [Yy]*)
+         USE_AUTH="yes"
+         while true; do
+           read -sp "Enter password for Code Server: " PASSWORD1
+           echo
+           read -sp "Confirm password: " PASSWORD2
+           echo
+           if [ "$PASSWORD1" = "$PASSWORD2" ]; then
+             if [ -n "$PASSWORD1" ]; then
+               CODE_PASSWORD="$PASSWORD1"
+               break
+             else
+               echo -e "${RD}Password cannot be empty. Please try again.${CL}"
+             fi
+           else
+             echo -e "${RD}Passwords do not match. Please try again.${CL}"
+           fi
+         done
+         break
+         ;;
+       [Nn]*)
+         USE_AUTH="no"
+         echo -e "${YW}Warning: Code Server will be accessible without authentication!${CL}"
+         break
+         ;;
+       *)
+         echo "Please answer yes or no."
+         ;;
+       esac
+     done
+     echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
      
      function msg_info() {
        local msg="$1"
@@ -77,7 +113,9 @@
      
      msg_info "Installing Dependencies"
      apt-get update &>/dev/null
-     apt-get install -y curl git jq &>/dev/null
+     apt-get install -y curl &>/dev/null
+     apt-get install -y git &>/dev/null
+     apt-get install -y jq &>/dev/null
      msg_ok "Installed Dependencies"
      
      VERSION=$(curl -fsSL https://api.github.com/repos/coder/code-server/releases/latest |
@@ -88,104 +126,93 @@
      curl -fOL https://github.com/coder/code-server/releases/download/v"$VERSION"/code-server_"${VERSION}"_amd64.deb &>/dev/null
      dpkg -i code-server_"${VERSION}"_amd64.deb &>/dev/null
      rm -rf code-server_"${VERSION}"_amd64.deb
-     msg_ok "Installed Code-Server v${VERSION}"
-     
-     msg_info "Configuring Code-Server with Microsoft Marketplace"
      mkdir -p ~/.config/code-server/
      mkdir -p ~/.local/share/code-server/User/
+     systemctl enable -q --now code-server@"$USER"
      
-     cat <<'CONFIGEOF' >~/.config/code-server/config.yaml
+     if [ "$USE_AUTH" = "yes" ]; then
+     cat <<EOF >~/.config/code-server/config.yaml
+     bind-addr: 0.0.0.0:8680
+     auth: password
+     password: $CODE_PASSWORD
+     cert: false
+     app-name: "Visual Studio Code"
+     EOF
+     else
+     cat <<EOF >~/.config/code-server/config.yaml
      bind-addr: 0.0.0.0:8680
      auth: none
      password: 
      cert: false
      app-name: "Visual Studio Code"
-     CONFIGEOF
-     
-     PRODUCT_JSON=~/.local/share/code-server/product.json
-     cat <<'PRODUCTEOF' >"$PRODUCT_JSON"
-     {
-       "nameShort": "Code",
-       "nameLong": "Visual Studio Code",
-       "applicationName": "code",
-       "dataFolderName": ".vscode",
-       "win32MutexName": "vscode",
-       "licenseName": "MIT",
-       "licenseUrl": "https://github.com/microsoft/vscode/blob/main/LICENSE.txt",
-       "win32DirName": "Microsoft VS Code",
-       "win32NameVersion": "Microsoft Visual Studio Code",
-       "win32RegValueName": "VSCode",
-       "win32AppUserModelId": "Microsoft.VisualStudioCode",
-       "win32ShellNameShort": "Code",
-       "darwinBundleIdentifier": "com.microsoft.VSCode",
-       "reportIssueUrl": "https://github.com/microsoft/vscode/issues/new",
-       "urlProtocol": "vscode",
-       "extensionAllowedProposedApi": [],
-       "enableTelemetry": false,
-       "aiConfig": {
-         "ariaKey": "no-telemetry"
-       },
-       "extensionsGallery": {
-         "serviceUrl": "https://marketplace.visualstudio.com/_apis/public/gallery",
-         "cacheUrl": "https://vscode.blob.core.windows.net/gallery/index",
-         "itemUrl": "https://marketplace.visualstudio.com/items",
-         "controlUrl": "",
-         "recommendationsUrl": ""
-       }
-     }
-     PRODUCTEOF
-     
-     cat <<'SETTINGSEOF' >~/.local/share/code-server/User/settings.json
-     {
-       "telemetry.telemetryLevel": "off",
-       "update.mode": "none",
-       "extensions.autoUpdate": true,
-       "extensions.autoCheckUpdates": true,
-       "workbench.colorTheme": "Default Dark+",
-       "security.workspace.trust.enabled": false
-     }
-     SETTINGSEOF
-     
-     msg_ok "Configured Microsoft Marketplace"
-     
-     msg_info "Starting Code-Server Service"
-     systemctl enable -q --now code-server@"$USER"
-     systemctl restart code-server@"$USER"
-     msg_ok "Started Code-Server Service"
-     
-     sleep 3
-     
-     if systemctl is-active --quiet code-server@"$USER"; then
-       SERVICE_STATUS="${GN}Running${CL}"
-     else
-       SERVICE_STATUS="${RD}Failed${CL}"
+     EOF
      fi
      
-     msg_ok "Installed ${APP} on $hostname"
+     cat <<EOF >~/.local/share/code-server/product.json
+     {
+     "nameShort": "Code",
+     "nameLong": "Visual Studio Code",
+     "applicationName": "code",
+     "dataFolderName": ".vscode",
+     "win32MutexName": "vscode",
+     "licenseName": "MIT",
+     "licenseUrl": "https://github.com/microsoft/vscode/blob/main/LICENSE.txt",
+     "win32DirName": "Microsoft VS Code",
+     "win32NameVersion": "Microsoft Visual Studio Code",
+     "win32RegValueName": "VSCode",
+     "win32AppUserModelId": "Microsoft.VisualStudioCode",
+     "win32ShellNameShort": "Code",
+     "darwinBundleIdentifier": "com.microsoft.VSCode",
+     "reportIssueUrl": "https://github.com/microsoft/vscode/issues/new",
+     "urlProtocol": "vscode",
+     "extensionAllowedProposedApi": [],
+     "enableTelemetry": false,
+     "aiConfig": {
+     "ariaKey": "no-telemetry"
+     },
+     "extensionsGallery": {
+     "serviceUrl": "https://marketplace.visualstudio.com/_apis/public/gallery",
+     "cacheUrl": "https://vscode.blob.core.windows.net/gallery/index",
+     "itemUrl": "https://marketplace.visualstudio.com/items",
+     "controlUrl": "",
+     "recommendationsUrl": ""
+     }
+     }
+     EOF
+     cat <<EOF >~/.local/share/code-server/User/settings.json
+     {
+     "telemetry.telemetryLevel": "off",
+     "update.mode": "none",
+     "extensions.autoUpdate": true,
+     "extensions.autoCheckUpdates": true,
+     "workbench.colorTheme": "Default Dark+",
+     "security.workspace.trust.enabled": false
+     }
+     EOF
+     systemctl restart code-server@"$USER"
+     msg_ok "Installed Code-Server v${VERSION} on $hostname"
      
      echo -e "\n${GN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${CL}"
      echo -e "${GN}Installation Complete!${CL}\n"
      echo -e "${APP} should be reachable at:"
      echo -e "${BL}http://$IP:8680${CL}\n"
-     echo -e "${YW}Service Status:${CL} $SERVICE_STATUS\n"
-     echo -e "${YW}Features Enabled:${CL}"
-     echo -e "✓ Microsoft Visual Studio Marketplace"
-     echo -e "✓ Official VS Code Extensions"
-     echo -e "✓ No authentication (change in config if needed)"
-     echo -e "✓ Accessible from any device on network"
-     echo -e "\n${YW}Configuration Files:${CL}"
-     echo -e "- Config: ${BGN}~/.config/code-server/config.yaml${CL}"
-     echo -e "- Product: ${BGN}~/.local/share/code-server/product.json${CL}"
-     echo -e "- Settings: ${BGN}~/.local/share/code-server/User/settings.json${CL}"
-     echo -e "\n${YW}Manage Service:${CL}"
-     echo -e "- Start:   ${BGN}systemctl start code-server@\$USER${CL}"
-     echo -e "- Stop:    ${BGN}systemctl stop code-server@\$USER${CL}"
-     echo -e "- Restart: ${BGN}systemctl restart code-server@\$USER${CL}"
-     echo -e "- Status:  ${BGN}systemctl status code-server@\$USER${CL}"
-     echo -e "- Logs:    ${BGN}journalctl -u code-server@\$USER -f${CL}"
-     echo -e "\n${YW}Enable Password (Optional):${CL}"
-     echo -e "Edit ~/.config/code-server/config.yaml and set:"
-     echo -e "  auth: password"
-     echo -e "  password: your_password_here"
-     echo -e "Then restart: ${BGN}systemctl restart code-server@\$USER${CL}"
+     
+     if [ "$USE_AUTH" = "yes" ]; then
+       echo -e "${YW}Authentication:${CL} ${GN}Enabled${CL}"
+       echo -e "${YW}Password:${CL} ${GN}(as configured)${CL}\n"
+     else
+       echo -e "${YW}Authentication:${CL} ${RD}Disabled${CL}"
+       echo -e "${YW}Warning:${CL} Anyone can access without password!\n"
+     fi
+     
+     echo -e "${GN}✓${CL} Microsoft Visual Studio Marketplace: ${GN}Enabled${CL}"
+     echo -e "${GN}✓${CL} You can now install official Microsoft extensions"
+     echo -e "\n${YW}Configuration:${CL}"
+     echo -e "  Config file: ${BGN}~/.config/code-server/config.yaml${CL}"
+     echo -e "  Product file: ${BGN}~/.local/share/code-server/product.json${CL}"
+     echo -e "  Settings: ${BGN}~/.local/share/code-server/User/settings.json${CL}"
+     echo -e "\n${YW}Service Management:${CL}"
+     echo -e "  Status:  ${BGN}systemctl status code-server@$USER${CL}"
+     echo -e "  Restart: ${BGN}systemctl restart code-server@$USER${CL}"
+     echo -e "  Logs:    ${BGN}journalctl -u code-server@$USER -f${CL}"
      echo -e "${GN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${CL}\n"
