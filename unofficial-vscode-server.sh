@@ -200,7 +200,20 @@ fi
 VERSION=$(curl -fsSL https://api.github.com/repos/coder/code-server/releases/latest | grep "tag_name" | awk '{print substr($2, 3, length($2)-4) }')
 
 msg_info "Installing Code-Server v${VERSION}"
-curl -fOL https://github.com/coder/code-server/releases/download/v"$VERSION"/code-server_"${VERSION}"_amd64.deb &>/dev/null
+DOWNLOAD_URL="https://github.com/coder/code-server/releases/download/v${VERSION}/code-server_${VERSION}_amd64.deb"
+
+set +e  # Disable errexit temporarily
+curl -sL -o code-server_"${VERSION}"_amd64.deb "$DOWNLOAD_URL"
+CURL_EXIT=$?
+set -e  # Re-enable errexit
+
+if [ $CURL_EXIT -ne 0 ] || [ ! -f code-server_"${VERSION}"_amd64.deb ]; then
+    echo -e "\n${RD}Failed to download Code-Server (exit code: $CURL_EXIT)${CL}"
+    echo "URL: $DOWNLOAD_URL"
+    echo "Please check your internet connection or try again later."
+    exit 1
+fi
+
 dpkg -i code-server_"${VERSION}"_amd64.deb &>/dev/null
 rm -rf code-server_"${VERSION}"_amd64.deb
 mkdir -p ~/.config/code-server/
