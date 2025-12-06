@@ -1,20 +1,24 @@
 #!/usr/bin/env bash
 
-# Modified script to install VS Code Server with original Visual Studio Code repository
-# Updated: Use NPM instead of Yarn (VS Code 1.106+ requirement)
+# Official VS Code Server installation script
+# Native GitHub authentication for Copilot
+# Seamless AI features integration
+# Based on: https://github.com/community-scripts/ProxmoxVE
+# Modified by: biezz-2
 
 function header_info {
 cat <<"EOF"
- _    _____    ______          __        _____                          
-| |  / / (_)  / ____/___  ____/ /__     / ___/___  ______   _____  _____
-| | / / / /  / /   / __ \/ __  / _ \    \__ \/ _ \/ ___/ | / / _ \/ ___/
-| |/ / / /  / /___/ /_/ / /_/ /  __/   ___/ /  __/ /   | |/ /  __/ /    
-|___/_/_/   \____/\____/\__,_/\___/   /____/\___/_/    |___/\___/_/     
-                                                                         
+   ______          __        _____                          
+  / ____/___  ____/ /__     / ___/___  ______   _____  _____
+ / /   / __ \/ __  / _ \    \__ \/ _ \/ ___/ | / / _ \/ ___/
+/ /___/ /_/ / /_/ /  __/   ___/ /  __/ /   | |/ /  __/ /    
+\____/\____/\__,_/\___/   /____/\___/_/    |___/\___/_/     
+         (Official VS Code Server + GitHub Copilot)
+ 
 EOF
 }
-
 IP=$(hostname -I | awk '{print $1}')
+HOSTNAME=$(hostname -f 2>/dev/null || hostname)
 YW=$(echo "\033[33m")
 BL=$(echo "\033[36m")
 RD=$(echo "\033[01;31m")
@@ -25,7 +29,7 @@ CL=$(echo "\033[m")
 BFR="\\r\\033[K"
 HOLD="-"
 CM="${GN}✓${CL}"
-APP="VS Code Server (Original Repository)"
+APP="Official VS Code Server"
 hostname="$(hostname)"
 set -o errexit
 set -o errtrace
@@ -41,26 +45,18 @@ local reason="Unknown failure occured."
 local msg="${1:-$reason}"
 local flag="${RD}‼ ERROR ${CL}$EXIT@$LINE"
 echo -e "$flag $msg" 1>&2
-echo -e "${YW}Check logs above for details${CL}"
 exit "$EXIT"
 }
-
 clear
 header_info
-
-echo -e "${YW}System Requirements Check${CL}"
-echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-TOTAL_RAM=$(free -m | awk '/^Mem:/{print $2}')
-FREE_RAM=$(free -m | awk '/^Mem:/{print $7}')
-echo -e "Total RAM: ${BL}${TOTAL_RAM}MB${CL}"
-echo -e "Available RAM: ${BL}${FREE_RAM}MB${CL}"
-
-if [ "$TOTAL_RAM" -lt 3500 ]; then
-echo -e "${RD}ERROR: Need at least 4GB total RAM${CL}"
-exit 1
+if command -v pveversion >/dev/null 2>&1; then
+echo -e "⚠️  Can't Install on Proxmox "
+exit
 fi
-echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
-
+if [ -e /etc/alpine-release ]; then
+echo -e "⚠️  Can't Install on Alpine"
+exit
+fi
 while true; do
 read -p "This will Install ${APP} on $hostname. Proceed(y/n)?" yn
 case $yn in
@@ -69,6 +65,28 @@ case $yn in
 *) echo "Please answer yes or no." ;;
 esac
 done
+
+echo -e "\n${YW}Port Configuration${CL}"
+echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo -e "${GN}Configure which port VS Code Server will use${CL}\n"
+echo -e "Current IP: ${BL}$IP${CL}"
+echo -e "Current Hostname: ${BL}$HOSTNAME${CL}\n"
+
+while true; do
+    read -p "Enter port number (default 8680): " PORT_INPUT
+    if [ -z "$PORT_INPUT" ]; then
+        PORT="8680"
+        break
+    elif [[ "$PORT_INPUT" =~ ^[0-9]+$ ]] && [ "$PORT_INPUT" -ge 1024 ] && [ "$PORT_INPUT" -le 65535 ]; then
+        PORT="$PORT_INPUT"
+        break
+    else
+        echo -e "${RD}Invalid port. Please enter a number between 1024-65535${CL}"
+    fi
+done
+
+echo -e "\n${GN}VS Code Server will be accessible at: ${BL}http://${IP}:${PORT}${CL}"
+echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
 
 function msg_info() {
 local msg="$1"
@@ -81,95 +99,78 @@ echo -e "${BFR} ${CM} ${GN}${msg}${CL}"
 }
 
 msg_info "Installing Dependencies"
-apt-get update >/dev/null 2>&1
-apt-get install -y curl wget git jq build-essential libssl-dev pkg-config python3 libx11-dev libxkbfile-dev libsecret-1-dev >/dev/null 2>&1
+apt-get update &>/dev/null
+apt-get install -y curl &>/dev/null
+apt-get install -y git &>/dev/null
+apt-get install -y wget &>/dev/null
 msg_ok "Installed Dependencies"
 
-msg_info "Installing Node.js v22"
-if command -v node &>/dev/null; then
-NODE_VERSION=$(node --version | cut -d'v' -f2 | cut -d'.' -f1)
-if [ "$NODE_VERSION" -lt 22 ]; then
-apt-get remove -y nodejs >/dev/null 2>&1 || true
-curl -fsSL https://deb.nodesource.com/setup_22.x | bash - >/dev/null 2>&1
-apt-get install -y nodejs >/dev/null 2>&1
+msg_info "Installing Official VS Code Server CLI"
+set +e
+curl -Lk "https://code.visualstudio.com/sha/download?build=stable&os=cli-alpine-x64" --output /tmp/vscode_cli.tar.gz
+CURL_EXIT=$?
+set -e
+
+if [ $CURL_EXIT -ne 0 ] || [ ! -f /tmp/vscode_cli.tar.gz ]; then
+    echo -e "\n${RD}Failed to download VS Code CLI (exit code: $CURL_EXIT)${CL}"
+    echo "Please check your internet connection or try again later."
+    exit 1
 fi
-else
-curl -fsSL https://deb.nodesource.com/setup_22.x | bash - >/dev/null 2>&1
-apt-get install -y nodejs >/dev/null 2>&1
-fi
-msg_ok "Installed Node.js $(node --version)"
 
-msg_info "Fetching Latest VS Code Version"
-VSCODE_VERSION=$(curl -fsSL https://api.github.com/repos/microsoft/vscode/releases/latest | jq -r '.tag_name')
-msg_ok "Latest Version: ${VSCODE_VERSION}"
+tar -xzf /tmp/vscode_cli.tar.gz -C /usr/local/bin/
+chmod +x /usr/local/bin/code
+rm /tmp/vscode_cli.tar.gz
+msg_ok "Installed Official VS Code Server"
 
-msg_info "Cloning VS Code Repository"
-INSTALL_DIR="/opt/vscode-server"
-rm -rf "$INSTALL_DIR" 2>/dev/null || true
-git clone --depth 1 --branch "$VSCODE_VERSION" https://github.com/microsoft/vscode.git "$INSTALL_DIR" >/dev/null 2>&1
-cd "$INSTALL_DIR"
-msg_ok "Cloned VS Code Repository"
-
-echo -e "\n${YW}Building VS Code - This takes 30-60 minutes${CL}\n"
-
-msg_info "Installing Dependencies"
-echo -e "\n${DGN}Running: npm install (15-30 min)${CL}"
-npm install || exit 1
-msg_ok "Installed Dependencies"
-
-msg_info "Compiling VS Code"
-echo -e "\n${DGN}Running: npm run compile (15-30 min)${CL}"
-npm run compile || exit 1
-msg_ok "Compiled VS Code"
-
-msg_info "Creating Systemd Service"
+msg_info "Configuring VS Code Server Service"
 cat <<EOF >/etc/systemd/system/vscode-server.service
 [Unit]
-Description=Visual Studio Code Server (Original)
+Description=Official VS Code Server
 After=network.target
 
 [Service]
 Type=simple
-User=$USER
-WorkingDirectory=$INSTALL_DIR
-ExecStart=/usr/bin/node $INSTALL_DIR/out/server-main.js --host 0.0.0.0 --port 8680 --without-connection-token
+User=root
+WorkingDirectory=/root
+ExecStart=/usr/local/bin/code serve-web --host 0.0.0.0 --port $PORT --without-connection-token --accept-server-license-terms
 Restart=always
-RestartSec=10
-Environment=NODE_ENV=production
+RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
 systemctl daemon-reload
-systemctl enable vscode-server
-systemctl start vscode-server
-msg_ok "Started Service"
-
-PRODUCT_JSON="$INSTALL_DIR/product.json"
-cp "$PRODUCT_JSON" "$PRODUCT_JSON.backup" 2>/dev/null || true
-cat <<EOF >"$PRODUCT_JSON"
-{
-"nameShort": "Code",
-"nameLong": "Visual Studio Code",
-"applicationName": "code",
-"dataFolderName": ".vscode",
-"win32MutexName": "vscode",
-"licenseName": "MIT",
-"licenseUrl": "https://github.com/microsoft/vscode/blob/main/LICENSE.txt",
-"extensionsGallery": {
-"serviceUrl": "https://marketplace.visualstudio.com/_apis/public/gallery",
-"itemUrl": "https://marketplace.visualstudio.com/items",
-"cacheUrl": "https://vscode.blob.core.windows.net/gallery/index",
-"controlUrl": ""
-}
-}
-EOF
-
-msg_ok "Installed ${APP}"
+systemctl enable -q --now vscode-server
+msg_ok "Configured VS Code Server"
 
 echo -e "\n${GN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${CL}"
 echo -e "${GN}Installation Complete!${CL}\n"
-echo -e "${BL}http://$IP:8680${CL}\n"
-echo -e "Service: ${BGN}systemctl status vscode-server${CL}"
+
+echo -e "${APP} is now accessible at:"
+echo -e "${BL}http://${IP}:${PORT}${CL}\n"
+
+echo -e "${GN}✓${CL} Official Microsoft VS Code Server: ${GN}Installed${CL}"
+echo -e "${GN}✓${CL} Native GitHub authentication: ${GN}Available${CL}"
+echo -e "${GN}✓${CL} GitHub Copilot: ${GN}Full support${CL}"
+echo -e "${GN}✓${CL} Microsoft Marketplace: ${GN}Native${CL}"
+
+echo -e "\n${YW}How to use GitHub Copilot:${CL}"
+echo -e "1. Open VS Code at: ${BL}http://${IP}:${PORT}${CL}"
+echo -e "2. Click ${GN}Account icon${CL} (bottom right)"
+echo -e "3. Select ${GN}'Sign in to use GitHub Copilot'${CL}"
+echo -e "4. Choose ${GN}'Sign in with GitHub'${CL}"
+echo -e "5. Authorize VS Code in your browser"
+echo -e "6. ${GN}Done!${CL} Copilot is active ✨"
+
+echo -e "\n${YW}Features:${CL}"
+echo -e "  ${GN}✓${CL} No device code flow needed"
+echo -e "  ${GN}✓${CL} Seamless authentication"
+echo -e "  ${GN}✓${CL} Auto token refresh"
+echo -e "  ${GN}✓${CL} Native GitHub integration"
+
+echo -e "\n${YW}Service Management:${CL}"
+echo -e "  Status:  ${BGN}systemctl status vscode-server${CL}"
+echo -e "  Restart: ${BGN}systemctl restart vscode-server${CL}"
+echo -e "  Logs:    ${BGN}journalctl -u vscode-server -f${CL}"
 echo -e "${GN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${CL}\n"
