@@ -20,6 +20,7 @@
                         vscode: {
                             dark: '#1e1e1e',
                             blue: '#007acc',
+                            activity: '#333333'
                         }
                     }
                 }
@@ -38,15 +39,13 @@
         }
         .code-block:hover .copy-btn { opacity: 1; }
         
-        /* Highlight Script 2 Column */
-        .comparison-table td:nth-child(3), .comparison-table th:nth-child(3) {
-            background-color: rgba(34, 197, 94, 0.05);
-            border-left: 2px solid rgba(34, 197, 94, 0.5);
-            border-right: 2px solid rgba(34, 197, 94, 0.5);
-        }
-        .comparison-table th:nth-child(3) {
-            background-color: rgba(34, 197, 94, 0.2);
+        /* Table Highlights */
+        .comparison-table td:nth-child(3) {
+            background-color: rgba(34, 197, 94, 0.1);
+            border-left: 1px solid rgba(34, 197, 94, 0.2);
+            border-right: 1px solid rgba(34, 197, 94, 0.2);
             color: #4ade80;
+            font-weight: 700;
         }
     </style>
 </head>
@@ -57,12 +56,12 @@
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center gap-3">
                     <i class="fa-brands fa-microsoft text-blue-500 text-2xl"></i>
-                    <span class="font-bold text-xl tracking-tight">VS Code Server <span class="text-xs bg-green-600 text-white px-2 py-0.5 rounded ml-1">V2.0</span></span>
+                    <span class="font-bold text-xl tracking-tight">VS Code Server <span class="text-xs bg-blue-600 text-white px-2 py-0.5 rounded ml-1">OFFICIAL</span></span>
                 </div>
                 <div class="hidden md:block">
                     <div class="ml-10 flex items-baseline space-x-4">
-                        <a href="#stats" class="hover:text-blue-400 px-3 py-2 text-sm font-medium">Results</a>
-                        <a href="#comparison" class="hover:text-blue-400 px-3 py-2 text-sm font-medium">Comparison</a>
+                        <a href="#home" class="hover:text-blue-400 px-3 py-2 text-sm font-medium">Home</a>
+                        <a href="#comparison" class="hover:text-blue-400 px-3 py-2 text-sm font-medium">Why Official?</a>
                         <a href="#install" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition">Install Now</a>
                     </div>
                 </div>
@@ -70,299 +69,137 @@
         </div>
     </nav>
 
-    <section class="pt-20 pb-12 px-4 text-center">
+    <section id="home" class="pt-20 pb-16 px-4 text-center">
         <div class="max-w-5xl mx-auto">
             <div class="inline-flex items-center gap-2 mb-6 px-4 py-2 bg-green-900/30 text-green-400 rounded-full text-sm font-semibold border border-green-800">
                 <i class="fa-solid fa-check-circle"></i> V2.0 Released: Native GitHub Copilot Support
-            </div>
-            <h1 class="text-5xl md:text-7xl font-bold mb-6 text-white leading-tight">
-                The <span class="text-blue-500">Official</span> Way to<br> Host VS Code
-            </h1>
-            
-            <div class="flex flex-wrap justify-center gap-4 text-sm md:text-base text-slate-400 mb-10 font-mono">
-                <span class="flex items-center gap-2"><i class="fa-solid fa-check text-green-400"></i> 100% Success Rate</span>
-                <span class="hidden md:inline">•</span>
-                <span class="flex items-center gap-2"><i class="fa-solid fa-bolt text-yellow-400"></i> 2-5 Min Install</span>
-                <span class="hidden md:inline">•</span>
-                <span class="flex items-center gap-2"><i class="fa-solid fa-list-check text-blue-400"></i> 2 Setup Questions</span>
-            </div>
+                                <span class="text-slate-500 ml-4">Proceed(y/n)? -> Ketik 'y'</span>
+                            </li>
+                        </ol>
+                    </div>
 
-            <div class="bg-slate-800/50 p-1 rounded-xl max-w-3xl mx-auto border border-slate-700 shadow-2xl mb-12">
-                <div class="bg-black/80 rounded-lg p-4 flex items-center justify-between gap-4">
-                    <code class="font-mono text-sm text-green-400 text-left flex-1 overflow-x-auto whitespace-nowrap scrollbar-hide">
-                        bash -c "$(curl -fsSL https://raw.githubusercontent.com/biezz-2/VS-Code-Server/refs/heads/main/official-vscode-server.sh)"
-                    </code>
-                    <button onclick="copyCode(this)" class="bg-slate-700 hover:bg-slate-600 text-white text-xs px-4 py-2 rounded font-bold transition">COPY</button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="stats" class="pb-16 px-4">
-        <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 hover:border-green-500 transition text-center group">
-                <div class="text-3xl font-bold text-white mb-1 group-hover:text-green-400">2-5</div>
-                <div class="text-xs text-slate-400 uppercase tracking-wider mb-3">Menit Install</div>
-                <span class="bg-green-900/30 text-green-400 text-xs px-2 py-1 rounded">⚡ Fastest</span>
-            </div>
-            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 hover:border-green-500 transition text-center group">
-                <div class="text-3xl font-bold text-white mb-1 group-hover:text-green-400">100%</div>
-                <div class="text-xs text-slate-400 uppercase tracking-wider mb-3">Success Rate</div>
-                <span class="bg-green-900/30 text-green-400 text-xs px-2 py-1 rounded">✅ Tested</span>
-            </div>
-            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 hover:border-green-500 transition text-center group">
-                <div class="text-3xl font-bold text-white mb-1 group-hover:text-green-400">2</div>
-                <div class="text-xs text-slate-400 uppercase tracking-wider mb-3">Setup Questions</div>
-                <span class="bg-green-900/30 text-green-400 text-xs px-2 py-1 rounded">🟢 Simple</span>
-            </div>
-            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 hover:border-green-500 transition text-center group">
-                <div class="text-3xl font-bold text-white mb-1 group-hover:text-green-400">2 GB</div>
-                <div class="text-xs text-slate-400 uppercase tracking-wider mb-3">RAM Minimum</div>
-                <span class="bg-green-900/30 text-green-400 text-xs px-2 py-1 rounded">💾 Light</span>
-            </div>
-        </div>
-    </section>
-
-    <section class="py-16 bg-slate-900/50 border-y border-slate-800">
-        <div class="max-w-5xl mx-auto px-4">
-            <div class="flex flex-col md:flex-row gap-8 items-center">
-                <div class="md:w-1/2">
-                    <h2 class="text-3xl font-bold mb-4">🎉 Tested in Production</h2>
-                    <blockquote class="text-lg text-slate-300 italic mb-6 border-l-4 border-blue-500 pl-4">
-                        "Berhasil deploy ke 4 LXC container dalam waktu kurang dari 15 menit. GitHub Copilot langsung aktif tanpa konfigurasi tambahan!"
-                    </blockquote>
-                    <ul class="space-y-2 text-sm text-slate-400">
-                        <li class="flex items-center gap-2"><i class="fa-solid fa-clock text-green-400"></i> Avg Install Time: <strong>2m 37s</strong></li>
-                        <li class="flex items-center gap-2"><i class="fa-solid fa-check-double text-green-400"></i> Zero Config Errors</li>
-                        <li class="flex items-center gap-2"><i class="fa-brands fa-github text-white"></i> 100% Copilot Activation</li>
-                    </ul>
-                </div>
-                <div class="md:w-1/2 w-full">
-                    <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 shadow-xl">
-                        <h3 class="text-sm font-bold text-slate-400 uppercase mb-4 tracking-wider">Live Deployment Status</h3>
-                        <div class="space-y-3">
-                            <div class="flex items-center justify-between p-3 bg-slate-900/50 rounded border border-slate-700/50">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                                    <span class="font-mono text-sm">codingangwej (122)</span>
-                                </div>
-                                <span class="text-xs bg-green-900/30 text-green-400 px-2 py-1 rounded">Production</span>
-                            </div>
-                            <div class="flex items-center justify-between p-3 bg-slate-900/50 rounded border border-slate-700/50">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                                    <span class="font-mono text-sm">ai-hackthation (118)</span>
-                                </div>
-                                <span class="text-xs bg-blue-900/30 text-blue-400 px-2 py-1 rounded">Dev</span>
-                            </div>
-                            <div class="flex items-center justify-between p-3 bg-slate-900/50 rounded border border-slate-700/50">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                                    <span class="font-mono text-sm">ridha-jajanan (130)</span>
-                                </div>
-                                <span class="text-xs bg-purple-900/30 text-purple-400 px-2 py-1 rounded">Staging</span>
-                            </div>
-                            <div class="flex items-center justify-between p-3 bg-slate-900/50 rounded border border-slate-700/50">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                                    <span class="font-mono text-sm">biezz-wa-bot (131)</span>
-                                </div>
-                                <span class="text-xs bg-orange-900/30 text-orange-400 px-2 py-1 rounded">Bot</span>
-                            </div>
-                        </div>
+                    <div class="bg-slate-900/50 p-5 rounded-lg border border-slate-700">
+                        <h4 class="font-bold text-white mb-3">✨ Cara Aktivasi Copilot</h4>
+                        <ol class="list-decimal list-inside space-y-2 text-sm text-slate-300">
+                            <li>Buka <code class="bg-slate-800 px-1 rounded">http://IP:8680</code></li>
+                            <li>Klik icon <strong>Account</strong> (pojok kanan bawah)</li>
+                            <li>Pilih <strong>"Sign in to use GitHub Copilot"</strong></li>
+                            <li>Authorize di browser GitHub</li>
+                            <li>Selesai! Tanpa device code manual.</li>
+                        </ol>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <section id="comparison" class="py-16 bg-slate-900">
-        <div class="max-w-6xl mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-4">Analisis Pool & Perbandingan</h2>
-            <p class="text-center text-slate-400 mb-10">Data komprehensif dari hasil uji coba lapangan.</p>
-            
-            <div class="overflow-x-auto rounded-xl shadow-2xl border border-slate-700">
-                <table class="w-full text-left comparison-table divide-y divide-slate-700 bg-slate-800">
-                    <thead>
-                        <tr class="text-slate-300 text-sm uppercase tracking-wider">
-                            <th class="px-6 py-5 bg-slate-800">Aspek</th>
-                            <th class="px-6 py-5 bg-slate-800">Script 1<br><span class="text-xs normal-case text-slate-500 font-normal">Code-Server (Old)</span></th>
-                            <th class="px-6 py-5">✅ Script 2<br><span class="text-xs normal-case font-bold text-green-400">Official CLI (NEW)</span></th>
-                            <th class="px-6 py-5 bg-slate-800 text-slate-500">Script 3<br><span class="text-xs normal-case font-normal">Build Source</span></th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-700 text-sm font-medium">
-                        <tr>
-                            <td class="px-6 py-4 text-slate-300">Success Rate</td>
-                            <td class="px-6 py-4 text-green-400">✅ 100%</td>
-                            <td class="px-6 py-4 text-green-400">✅ 100%</td>
-                            <td class="px-6 py-4 text-red-400">❌ 0% (3+ failures)</td>
-                        </tr>
-                        <tr>
-                            <td class="px-6 py-4 text-slate-300">Install Time</td>
-                            <td class="px-6 py-4 text-yellow-500">⚡ 5-10 menit</td>
-                            <td class="px-6 py-4 text-green-400">⚡ 2-5 menit</td>
-                            <td class="px-6 py-4 text-red-400">⏳ 2+ jam</td>
-                        </tr>
-                        <tr>
-                            <td class="px-6 py-4 text-slate-300">GitHub Copilot</td>
-                            <td class="px-6 py-4 text-yellow-500">⚠️ Device Code Flow</td>
-                            <td class="px-6 py-4 text-green-400">✅ Native/Seamless</td>
-                            <td class="px-6 py-4 text-slate-500">❓ Unknown</td>
-                        </tr>
-                        <tr>
-                            <td class="px-6 py-4 text-slate-300">Setup Complexity</td>
-                            <td class="px-6 py-4 text-red-400">🔴 High (10+ prompts)</td>
-                            <td class="px-6 py-4 text-green-400">🟢 Low (2 prompts)</td>
-                            <td class="px-6 py-4 text-red-400">🔴 Very High</td>
-                        </tr>
-                        <tr>
-                            <td class="px-6 py-4 text-slate-300">Maintenance</td>
-                            <td class="px-6 py-4 text-yellow-500">🟡 Medium</td>
-                            <td class="px-6 py-4 text-green-400">🟢 Easy</td>
-                            <td class="px-6 py-4 text-red-400">🔴 Nightmare</td>
-                        </tr>
-                        <tr>
-                            <td class="px-6 py-4 text-slate-300">RAM Min</td>
-                            <td class="px-6 py-4 text-slate-400">2 GB</td>
-                            <td class="px-6 py-4 text-green-400">2 GB</td>
-                            <td class="px-6 py-4 text-red-400">4 GB+</td>
-                        </tr>
-                        <tr class="bg-slate-700/20">
-                            <td class="px-6 py-4 font-bold text-white">RESULT</td>
-                            <td class="px-6 py-4 text-yellow-500">🟡 Works but limited</td>
-                            <td class="px-6 py-4 text-green-400 font-bold">✅ Production Ready</td>
-                            <td class="px-6 py-4 text-red-400">❌ Still broken</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </section>
-
-    <section class="py-16 bg-gradient-to-br from-slate-900 to-blue-900/20">
-        <div class="max-w-4xl mx-auto px-4">
-            <div class="bg-slate-800 rounded-xl p-8 border border-slate-700 shadow-xl">
+            <div id="content-legacy" class="hidden bg-slate-800 rounded-xl p-8 border border-slate-700 opacity-75">
                 <div class="flex items-center gap-3 mb-6">
-                    <i class="fa-solid fa-arrow-right-arrow-left text-blue-400 text-2xl"></i>
-                    <h2 class="text-2xl font-bold text-white">Migration Guide</h2>
+                    <div class="w-10 h-10 rounded-full bg-yellow-500/20 flex items-center justify-center text-yellow-400">
+                        <i class="fa-solid fa-history"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white">Legacy Code-Server</h3>
+                        <p class="text-sm text-yellow-500 font-bold">⚠️ DEPRECATED / NOT RECOMMENDED</p>
+                    </div>
                 </div>
                 
-                <p class="text-slate-300 mb-6">
-                    Jika Anda saat ini menggunakan <strong>Script 1 (Code-Server)</strong> atau pernah mencoba <strong>Script 3</strong>, sangat disarankan untuk migrasi sekarang.
-                </p>
-
-                <div class="space-y-4">
-                    <div class="bg-black/40 rounded p-4 border border-slate-700">
-                        <p class="text-xs text-slate-500 uppercase font-bold mb-2">Terminal Server</p>
-                        <div class="font-mono text-sm text-slate-300 space-y-2">
-                            <div class="flex gap-2">
-                                <span class="text-blue-500">#</span>
-                                <span>1. Stop service lama</span>
-                            </div>
-                            <code class="block text-yellow-400">systemctl stop code-server@root oauth2-proxy</code>
-                            
-                            <div class="flex gap-2 mt-4">
-                                <span class="text-blue-500">#</span>
-                                <span>2. Jalankan Installer Official (2 menit)</span>
-                            </div>
-                            <code class="block text-green-400">bash -c "$(curl -fsSL https://raw.githubusercontent.com/biezz-2/VS-Code-Server/refs/heads/main/official-vscode-server.sh)"</code>
-                            
-                            <div class="flex gap-2 mt-4">
-                                <span class="text-blue-500">#</span>
-                                <span>3. Selesai! Akses di http://IP:8680</span>
-                            </div>
-                        </div>
-                    </div>
+                <p class="mb-4 text-slate-300">Script lama ini membutuhkan konfigurasi OAuth Proxy yang rumit dan Copilot manual.</p>
+                <div class="code-block bg-black rounded p-4 font-mono text-sm text-slate-400 mb-4 overflow-x-auto">
+                    <code>bash -c "$(curl -fsSL https://raw.githubusercontent.com/biezz-2/VS-Code-Server/refs/heads/main/unofficial-vscode-server.sh)"</code>
+                    <button onclick="copyCode(this)" class="copy-btn bg-slate-700 text-white text-xs px-2 py-1 rounded">Copy</button>
                 </div>
-                <p class="text-sm text-slate-400 mt-4"><em>*Extensions perlu diinstall ulang dari marketplace resmi. Settings akan tersimpan.</em></p>
             </div>
         </div>
     </section>
 
-    <section class="py-16">
+    <section class="py-16 bg-slate-900/50">
         <div class="max-w-4xl mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-10"><i class="fa-solid fa-circle-question text-blue-500 mr-2"></i> FAQ</h2>
+            <h2 class="text-3xl font-bold text-center mb-10"><i class="fa-solid fa-life-ring text-blue-500 mr-2"></i> Troubleshooting & FAQ</h2>
             
             <div class="space-y-4">
                 <div class="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden">
                     <button class="w-full px-6 py-4 text-left font-semibold flex justify-between items-center hover:bg-slate-700 transition" onclick="toggleFaq('faq1')">
-                        Apakah Script 2 lebih bagus dari Script 1?
+                        <span class="text-red-400">Error: listen EADDRINUSE: address already in use :::8680</span>
                         <i class="fa-solid fa-chevron-down text-slate-500 transition-transform" id="icon-faq1"></i>
                     </button>
                     <div id="faq1" class="hidden px-6 py-4 bg-slate-800/50 border-t border-slate-700 text-slate-300 text-sm">
-                        Ya! Script 2 lebih simple (2 vs 10+ questions), lebih cepat (2-5 vs 5-10 menit), dan Copilot-nya native (tidak perlu device code flow).
+                        <p class="mb-2">Port 8680 masih digunakan oleh instalasi lama (code-server). Matikan dulu:</p>
+                        <div class="bg-black p-3 rounded font-mono text-xs mb-2">
+                            systemctl stop code-server@root<br>
+                            systemctl restart vscode-server
+                        </div>
                     </div>
                 </div>
 
                 <div class="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden">
                     <button class="w-full px-6 py-4 text-left font-semibold flex justify-between items-center hover:bg-slate-700 transition" onclick="toggleFaq('faq2')">
-                        Kenapa Script 3 (Build Source) gagal terus?
+                        Bagaimana cara migrasi dari Unofficial ke Official?
                         <i class="fa-solid fa-chevron-down text-slate-500 transition-transform" id="icon-faq2"></i>
                     </button>
                     <div id="faq2" class="hidden px-6 py-4 bg-slate-800/50 border-t border-slate-700 text-slate-300 text-sm">
-                        Script 3 melakukan compile dari source code yang membutuhkan banyak dependency library yang sering konflik dan resource RAM/CPU yang sangat besar. Success rate 0% dari semua testing kami.
+                        <ol class="list-decimal list-inside space-y-1">
+                            <li>Stop service lama: <code>systemctl stop code-server@root</code></li>
+                            <li>Disable service lama: <code>systemctl disable code-server@root</code></li>
+                            <li>Jalankan script instalasi Official yang baru.</li>
+                            <li>Login ulang extension di VS Code baru.</li>
+                        </ol>
                     </div>
                 </div>
 
                 <div class="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden">
                     <button class="w-full px-6 py-4 text-left font-semibold flex justify-between items-center hover:bg-slate-700 transition" onclick="toggleFaq('faq3')">
-                        Apakah GitHub Copilot gratis?
+                        Service Management Commands
                         <i class="fa-solid fa-chevron-down text-slate-500 transition-transform" id="icon-faq3"></i>
                     </button>
-                    <div id="faq3" class="hidden px-6 py-4 bg-slate-800/50 border-t border-slate-700 text-slate-300 text-sm">
-                        Tidak. Perlu subscription $10/bulan atau gratis untuk students/open source maintainers. Namun, integrasi di Script 2 berjalan sempurna.
-                    </div>
-                </div>
-                
-                 <div class="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden">
-                    <button class="w-full px-6 py-4 text-left font-semibold flex justify-between items-center hover:bg-slate-700 transition" onclick="toggleFaq('faq4')">
-                        RAM minimum berapa?
-                        <i class="fa-solid fa-chevron-down text-slate-500 transition-transform" id="icon-faq4"></i>
-                    </button>
-                    <div id="faq4" class="hidden px-6 py-4 bg-slate-800/50 border-t border-slate-700 text-slate-300 text-sm">
-                       Script 2 hanya butuh 2GB RAM, sama seperti Script 1. Script 3 butuh 4GB+ (kalau bisa jalan).
+                    <div id="faq3" class="hidden px-6 py-4 bg-slate-800/50 border-t border-slate-700 text-slate-300 text-sm font-mono space-y-2">
+                        <div class="flex justify-between border-b border-slate-700 pb-1"><span>Status:</span> <span class="text-blue-400">systemctl status vscode-server</span></div>
+                        <div class="flex justify-between border-b border-slate-700 pb-1"><span>Logs:</span> <span class="text-blue-400">journalctl -u vscode-server -f</span></div>
+                        <div class="flex justify-between"><span>Restart:</span> <span class="text-blue-400">systemctl restart vscode-server</span></div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <footer class="bg-slate-950 py-10 border-t border-slate-900 text-center">
-        <div class="max-w-4xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-6 text-sm text-slate-500 mb-8">
-            <div>
-                <span class="block text-slate-400 font-bold mb-1">Updated</span>
-                2025-12-06
-            </div>
-            <div>
-                <span class="block text-slate-400 font-bold mb-1">Tested On</span>
-                Ubuntu 24.04 LTS
-            </div>
-            <div>
-                <span class="block text-green-400 font-bold mb-1">Success Rate</span>
-                100% (4/4)
-            </div>
-            <div>
-                <span class="block text-slate-400 font-bold mb-1">Version</span>
-                2.0
-            </div>
-        </div>
-        <p class="text-xs text-slate-700">Official VS Code Server Installer by <a href="https://github.com/biezz-2" class="text-blue-500 hover:underline">@biezz-2</a></p>
+    <footer class="bg-slate-950 py-8 border-t border-slate-900 text-center">
+        <p class="text-slate-500 text-sm">VS Code Server Installer v2.0 by <a href="https://github.com/biezz-2" class="text-blue-500 hover:underline">@biezz-2</a></p>
+        <p class="text-xs text-slate-700 mt-2">Not affiliated with Microsoft. "VS Code" is a trademark of Microsoft Corporation.</p>
     </footer>
 
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            switchTab('official');
+        });
+
+        function switchTab(tabName) {
+            document.getElementById('content-official').classList.add('hidden');
+            document.getElementById('content-legacy').classList.add('hidden');
+            
+            // Reset Styles
+            const tabOfficial = document.getElementById('tab-official');
+            const tabLegacy = document.getElementById('tab-legacy');
+
+            tabOfficial.className = "px-6 py-3 text-lg font-medium text-slate-500 hover:text-slate-300 focus:outline-none transition flex items-center gap-2";
+            tabLegacy.className = "px-6 py-3 text-lg font-medium text-slate-500 hover:text-slate-300 focus:outline-none transition";
+
+            if(tabName === 'official') {
+                document.getElementById('content-official').classList.remove('hidden');
+                tabOfficial.className = "px-6 py-3 text-lg font-bold text-green-400 border-b-2 border-green-500 focus:outline-none transition flex items-center gap-2";
+            } else {
+                document.getElementById('content-legacy').classList.remove('hidden');
+                tabLegacy.className = "px-6 py-3 text-lg font-bold text-yellow-400 border-b-2 border-yellow-500 focus:outline-none transition";
+            }
+        }
+
         function copyCode(button) {
             const codeBlock = button.previousElementSibling;
             const text = codeBlock.innerText;
             navigator.clipboard.writeText(text).then(() => {
                 const originalText = button.innerText;
-                button.innerText = "COPIED!";
-                button.classList.add("bg-green-600", "text-white");
-                button.classList.remove("bg-slate-700");
+                button.innerText = "Copied!";
+                button.classList.add("bg-green-600");
                 setTimeout(() => {
                     button.innerText = originalText;
-                    button.classList.remove("bg-green-600", "text-white");
-                    button.classList.add("bg-slate-700");
+                    button.classList.remove("bg-green-600");
                 }, 2000);
             });
         }
