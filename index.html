@@ -40,12 +40,14 @@
         .code-block:hover .copy-btn { opacity: 1; }
         
         /* Table Highlights */
-        .comparison-table td:nth-child(3) {
-            background-color: rgba(34, 197, 94, 0.1);
-            border-left: 1px solid rgba(34, 197, 94, 0.2);
-            border-right: 1px solid rgba(34, 197, 94, 0.2);
+        .comparison-table td:nth-child(3), .comparison-table th:nth-child(3) {
+            background-color: rgba(34, 197, 94, 0.05);
+            border-left: 2px solid rgba(34, 197, 94, 0.5);
+            border-right: 2px solid rgba(34, 197, 94, 0.5);
+        }
+        .comparison-table th:nth-child(3) {
+            background-color: rgba(34, 197, 94, 0.2);
             color: #4ade80;
-            font-weight: 700;
         }
     </style>
 </head>
@@ -95,7 +97,7 @@
     <div class="max-w-5xl mx-auto px-4 mb-24">
         <div class="bg-gradient-to-r from-slate-800 to-slate-900 rounded-2xl p-1 p-[1px] bg-gradient-to-r from-blue-500 via-purple-500 to-green-500">
             <div class="bg-slate-900 rounded-2xl p-8 relative overflow-hidden">
-                <div class="absolute top-0 right-0 bg-green-600 text-white text-xs font-bold px-4 py-1.5 rounded-bl-xl">🏆 WINNER: SCRIPT 2</div>
+                <div class="absolute top-0 right-0 bg-green-600 text-white text-xs font-bold px-4 py-1.5 rounded-bl-xl">🏆 WINNER: OFFICIAL SCRIPT</div>
                 
                 <div class="grid md:grid-cols-2 gap-8 items-center">
                     <div>
@@ -115,11 +117,11 @@
                     </div>
                     <div class="bg-black/50 rounded-xl p-5 border border-slate-700">
                         <div class="flex justify-between text-xs text-slate-500 mb-2 font-mono">
-                            <span>One-Click Install</span>
+                            <span>One-Click Install (Recommended)</span>
                             <span>bash</span>
                         </div>
                         <div class="code-block font-mono text-sm text-green-400 break-all">
-                            <code id="hero-cmd">bash -c "$(curl -fsSL https://raw.githubusercontent.com/biezz-2/VS-Code-Server/refs/heads/main/install-official-vscode-server.sh)"</code>
+                            <code id="hero-cmd">bash -c "$(curl -fsSL https://raw.githubusercontent.com/biezz-2/VS-Code-Server/refs/heads/main/official-vscode-server.sh)"</code>
                             <button onclick="copyCode(this)" class="copy-btn bg-slate-700 hover:bg-slate-600 text-white text-xs px-2 py-1 rounded">Copy</button>
                         </div>
                     </div>
@@ -138,8 +140,8 @@
                     <thead>
                         <tr class="text-slate-400 text-sm uppercase tracking-wider">
                             <th class="px-6 py-4 bg-slate-800">Feature</th>
-                            <th class="px-6 py-4 bg-slate-800">Script 1 (Old/Unofficial)</th>
-                            <th class="px-6 py-4 bg-green-900/20 text-green-400 border-b border-green-500/30">✅ Script 2 (Official CLI)</th>
+                            <th class="px-6 py-4 bg-slate-800">Script 1 (Legacy/Unofficial)</th>
+                            <th class="px-6 py-4 bg-green-900/20 text-green-400 border-b border-green-500/30">✅ Script 2 (Official / Recommended)</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-700 text-sm">
@@ -186,10 +188,10 @@
 
             <div class="flex justify-center mb-8 border-b border-slate-700">
                 <button onclick="switchTab('official')" id="tab-official" class="px-6 py-3 text-lg font-bold text-green-400 border-b-2 border-green-500 focus:outline-none transition flex items-center gap-2">
-                    <i class="fa-solid fa-star"></i> Official (New)
+                    <i class="fa-solid fa-star"></i> Official (Recommended)
                 </button>
                 <button onclick="switchTab('legacy')" id="tab-legacy" class="px-6 py-3 text-lg font-medium text-slate-500 hover:text-slate-300 focus:outline-none transition">
-                    Legacy (Old)
+                    Legacy (Not Recommended)
                 </button>
             </div>
 
@@ -207,7 +209,7 @@
                 <p class="mb-4 text-slate-300">Jalankan perintah ini di terminal server/LXC Anda:</p>
                 
                 <div class="code-block bg-black rounded-lg p-4 font-mono text-sm text-green-400 mb-8 overflow-x-auto border border-slate-700">
-                    <code>bash -c "$(curl -fsSL https://raw.githubusercontent.com/biezz-2/VS-Code-Server/refs/heads/main/install-official-vscode-server.sh)"</code>
+                    <code>bash -c "$(curl -fsSL https://raw.githubusercontent.com/biezz-2/VS-Code-Server/refs/heads/main/official-vscode-server.sh)"</code>
                     <button onclick="copyCode(this)" class="copy-btn bg-slate-700 text-white text-xs px-2 py-1 rounded">Copy</button>
                 </div>
 
