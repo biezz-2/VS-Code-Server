@@ -4,6 +4,8 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-brightgreen?style=for-the-badge)](LICENSE)
 [![Rekomendasi](https://img.shields.io/badge/rekomendasi-Script%201-blue?style=for-the-badge&labelColor=2b90d9)](#rekomendasi-akhir)
 
+PLEASE USE SUDO (IF NEEDED) WHEN YOU WANT TO RUN THE SCRIPT
+
 Deskripsi singkat:
 Repositori ini menyediakan dua opsi pemasangan VS Code Server: satu metode yang direkomendasikan (menggunakan code-server dari Coder, cepat dan stabil), serta satu metode eksperimen (mencoba membangun versi web asli VS Code dari sumbernya — berisiko tinggi). Dokumen ini disusun secara formal namun bersahabat, dengan panduan praktis dan penjelasan yang dirancang untuk membantu Anda membuat keputusan yang tepat.
 
